@@ -38,6 +38,7 @@ function changeTheme() {
 }
 
 const isLoaded = ref(false)
+const isLoading = ref(false)
 const repo = ref("")
 const readme = ref("")
 const config: Ref<ConfigJson> = ref({} as ConfigJson)
@@ -47,61 +48,69 @@ const selectedModules: Ref<string[]> = ref([])
 const selectedSet: Ref<string | undefined> = ref(undefined)
 const building = ref(false)
 
-function loadRepo() {
-  isLoaded.value = false
-  config.value = {} as ConfigJson
-  modules.value = new Map()
-  sets.value = new Map()
-  selectedModules.value = []
-  selectedSet.value = undefined
-  const urlSplit = repoUrl.value.split(/(?<!\/)\/(?!\/)/)
-  if (
-      urlSplit[1] === undefined
-      || urlSplit[1] === ""
-      || urlSplit[2] === undefined
-      || urlSplit[2] === ""
-  ) {
-    Message.error("仓库地址错误，请填写正确的 GitHub 仓库地址")
-    return
+async function loadRepo() {
+  try {
+    isLoaded.value = false
+    isLoading.value = true
+    config.value = {} as ConfigJson
+    modules.value = new Map()
+    sets.value = new Map()
+    selectedModules.value = []
+    selectedSet.value = undefined
+    const urlSplit = repoUrl.value.split(/(?<!\/)\/(?!\/)/)
+    if (
+        urlSplit[1] === undefined
+        || urlSplit[1] === ""
+        || urlSplit[2] === undefined
+        || urlSplit[2] === ""
+    ) {
+      Message.error("仓库地址错误，请填写正确的 GitHub 仓库地址")
+      return
+    }
+    repo.value = `${urlSplit[1]}/${urlSplit[2]}`
+
+    const readmeData = await GithubAPI.getRepoReadme(repo.value)
+    readme.value = btou(readmeData.content)
+    const configData = await GithubAPI.getRepoContents(repo.value, "config.json")
+    config.value = JSON.parse(btou(configData.content)) as ConfigJson
+    await loadModules()
+    await loadSets()
+    isLoaded.value = true
+    isLoading.value = false
+    Message.success("加载成功")
+  } catch (e: any) {
+    isLoaded.value = false
+    isLoading.value = false
+    config.value = {} as ConfigJson
+    modules.value = new Map()
+    sets.value = new Map()
+    selectedModules.value = []
+    selectedSet.value = undefined
+    repo.value = ""
   }
-  repo.value = `${urlSplit[1]}/${urlSplit[2]}`
-
-  GithubAPI.getRepoReadme(repo.value).then(data => {
-    readme.value = btou(data.content)
-  })
-
-  GithubAPI.getRepoContents(repo.value, "config.json").then(data => {
-    config.value = JSON.parse(btou(data.content)) as ConfigJson
-    loadModules()
-    loadSets()
-  })
-  isLoaded.value = true
 }
 
-function loadModules() {
+async function loadModules() {
   const basePath = Builder.getBasePath(config.value)
-  GithubAPI.getRepoContents(repo.value, basePath).then(data => {
-    for (const path of data) {
-      if (path.name == config.value.main_module) {
-        continue
-      }
-      GithubAPI.getRepoContents(repo.value, path.path + "/module.config.json").then(data => {
-        modules.value.set(path.path as string, JSON.parse(btou(data.content)) as ModuleConfigJson)
-      })
+  const data = await GithubAPI.getRepoContents(repo.value, basePath)
+  for (const path of data) {
+    if (path.name == config.value.main_module) {
+      continue
     }
-  })
+    GithubAPI.getRepoContents(repo.value, path.path + "/module.config.json").then(data => {
+      modules.value.set(path.path as string, JSON.parse(btou(data.content)) as ModuleConfigJson)
+    })
+  }
 }
 
-function loadSets() {
+async function loadSets() {
   const setsPath = config.value.sets_path
-  GithubAPI.getRepoContents(repo.value, setsPath).then(data => {
-    for (const path of data) {
-      GithubAPI.getRepoContents(repo.value, path.path).then(data => {
-        const configJson = JSON.parse(btou(data.content)) as SetConfigJson
-        sets.value.set(configJson.set_name, configJson)
-      })
-    }
-  })
+  const data = await GithubAPI.getRepoContents(repo.value, setsPath)
+  for (const path of data) {
+    const setConfigData = await GithubAPI.getRepoContents(repo.value, path.path)
+    const configJson = JSON.parse(btou(setConfigData.content)) as SetConfigJson
+    sets.value.set(configJson.set_name, configJson)
+  }
 }
 
 function changeModules() {
@@ -154,6 +163,7 @@ function build() {
   building.value = true
   Builder.build(repo.value, config.value, mods).then((blob) => {
     building.value = false
+    Message.success("构建成功")
     saveAs(blob, `${config.value.pack_name}-${config.value.version}.zip`)
   })
 }
@@ -185,7 +195,7 @@ function build() {
     <a-form :model="{}">
       <a-form-item label="仓库地址">
         <a-input v-model="repoUrl"/>
-        <a-button class="btn" @click="loadRepo">加载</a-button>
+        <a-button class="btn" @click="loadRepo" :loading="isLoading" :disabled="building">加载</a-button>
       </a-form-item>
     </a-form>
     <a-card>

@@ -94,6 +94,10 @@ export class Request {
     }
 
     private static async reject(response: any) {
-        Message.error(response.data.message)
+        console.log(response)
+        if(response.status == 403) {
+            Message.error("请求失败，可能是请求超过速率限制，请在右上角登录填写你的 GitHub Access Token")
+        }
+        Message.error(response.data.message || response.message)
     }
 }
