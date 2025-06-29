@@ -201,7 +201,7 @@ function build() {
     <a-card>
       <a-form :model="{}">
         <a-form-item label="选择模块">
-          <a-select v-model="selectedModules" multiple @change="changeModules">
+          <a-select v-model="selectedModules" multiple @change="changeModules" :disabled="isLoading || building">
             <div v-for="key in modules.keys()" :key="key">
               <a-tooltip v-if="!!modules.get(key)?.description" :content="modules.get(key)?.description">
                 <a-option :value="key" :disabled="checkModuleDisabled(key)">
@@ -215,7 +215,7 @@ function build() {
           </a-select>
         </a-form-item>
         <a-form-item label="选择合集">
-          <a-select v-model="selectedSet" @change="changeSet">
+          <a-select v-model="selectedSet" @change="changeSet" :disabled="isLoading || building">
             <div v-for="key in sets.keys()" :key="key">
               <a-tooltip v-if="!!sets.get(key)?.description" :content="sets.get(key)?.description">
                 <a-option :value="key">
