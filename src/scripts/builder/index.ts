@@ -24,10 +24,16 @@ interface FileOrTree {
 
 export class Builder {
     private static processPath(basePath: string, path: string) {
-        let curPath = path.replace(basePath, "")
-        const curPathSplit = curPath.split("/")
-        curPath = curPathSplit.length > 2 ? curPathSplit.slice(2).join("/") : ""
-        return curPath
+        if (path.startsWith(basePath)) {
+            let curPath = path.replace(basePath, "")
+            const curPathSplit = curPath.split("/")
+            curPath = curPathSplit.length > 2 ? curPathSplit.slice(2).join("/") : ""
+            return curPath
+        } else if (path.startsWith("./")) {
+            return path.substring(2)
+        } else {
+            return path
+        }
     }
 
     private static mergeFileOrTree(file1: FileOrTree, file2: FileOrTree): FileOrTree {
@@ -131,6 +137,7 @@ export class Builder {
             path: "pack.mcmeta",
             content: utob(JSON.stringify(metaJson, null, 2))
         })
+        pack.children?.push(await Builder.getFileTree(repo, basePath, config.icon))
         for (let module of moduleList) {
             pack = Builder.mergeFileOrTree(pack, module.files!!)
         }
