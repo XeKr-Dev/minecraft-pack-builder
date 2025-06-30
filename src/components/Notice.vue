@@ -22,7 +22,10 @@
     </a-card>
     <a-card style="margin-top: 20px">
       <template #title>
-        特别鸣谢 <a-link href="https://www.anvilcraft.dev/#/support" target="_blank"><icon-gift/></a-link>
+        特别鸣谢
+        <a-link href="https://www.anvilcraft.dev/#/support" target="_blank">
+          <icon-gift size="large"/>
+        </a-link>
       </template>
       虚位以待...
     </a-card>

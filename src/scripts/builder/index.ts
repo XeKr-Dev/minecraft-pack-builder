@@ -1,6 +1,6 @@
 import type {ConfigJson} from "@/scripts/type";
 import {GithubAPI} from "@/scripts/github";
-import {utob} from "@/scripts/util";
+import {utob64} from "@/scripts/util";
 import JSZip from "jszip";
 import mc_version from '@/minecraft_version.json'
 import {PathFormatter, RecipeFormatter} from "@/scripts/formatter";
@@ -249,8 +249,8 @@ authors = "${config.author}"
             fabricModJson.authors.push(string)
             quiltModJson.quilt_loader.metadata.contributors[string] = ""
         }
-        Builder.fileToZip(zip, utob(JSON.stringify(fabricModJson, null, 4)), "fabric.mod.json")
-        Builder.fileToZip(zip, utob(JSON.stringify(quiltModJson, null, 4)), "quilt.mod.json")
+        Builder.fileToZip(zip, utob64(JSON.stringify(fabricModJson, null, 4)), "fabric.mod.json")
+        Builder.fileToZip(zip, utob64(JSON.stringify(quiltModJson, null, 4)), "quilt.mod.json")
     }
 
     public static async build(
@@ -290,7 +290,7 @@ authors = "${config.author}"
         let pack: FileOrTree = await Builder.getFileTree(repo, basePath, `${basePath}/${config.main_module}`, type, mc_version)
         pack.children?.push({
             path: "pack.mcmeta",
-            content: utob(JSON.stringify(metaJson, null, 2))
+            content: utob64(JSON.stringify(metaJson, null, 2))
         })
         if (config.version_modules) {
             let versionModule = config.version_modules[version]

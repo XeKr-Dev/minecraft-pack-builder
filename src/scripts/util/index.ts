@@ -1,9 +1,72 @@
-// noinspection JSDeprecatedSymbols
-
-export function utob(str: string) {
+export function utob64(str: string) {
+    // noinspection JSDeprecatedSymbols
     return btoa(unescape(encodeURIComponent(str)))
 }
 
-export function btou(str: string) {
+export function b64tou(str: string) {
+    // noinspection JSDeprecatedSymbols
     return decodeURIComponent(escape(atob(str)))
+}
+
+export async function imageMagnify(b64: string) {
+    const destCanvas = document.createElement('canvas');
+    const destCtx = destCanvas.getContext('2d');
+    if (!destCtx) return b64;
+    destCanvas.width = 512;
+    destCanvas.height = 512;
+    const sourceCanvas = document.createElement('canvas');
+    const srcCtx = sourceCanvas.getContext('2d');
+    if (!srcCtx) return b64;
+    const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = reject;
+        image.src = b64;
+    });
+    sourceCanvas.width = img.width;
+    sourceCanvas.height = img.height;
+    srcCtx.drawImage(img, 0, 0, sourceCanvas.width, sourceCanvas.height);
+    img.remove()
+
+    const srcImageData = srcCtx.getImageData(
+        0, 0,
+        sourceCanvas.width,
+        sourceCanvas.height
+    );
+    const srcData = srcImageData.data;
+
+    // 创建目标图像数据
+    const destImageData = destCtx.createImageData(512, 512);
+    const destData = destImageData.data;
+
+    const ratioX = sourceCanvas.width / 512;
+    const ratioY = sourceCanvas.height / 512;
+
+    // 遍历目标图像每个像素
+    for (let y = 0; y < 512; y++) {
+        for (let x = 0; x < 512; x++) {
+            // 计算源图像对应坐标（浮点数）
+            const srcX = x * ratioX;
+            const srcY = y * ratioY;
+
+            // 取最邻近整数坐标
+            const nearestX = Math.min(sourceCanvas.width - 1, Math.max(0, Math.round(srcX)));
+            const nearestY = Math.min(sourceCanvas.height - 1, Math.max(0, Math.round(srcY)));
+
+            // 边界检查
+            const srcIdx = (nearestY * sourceCanvas.width + nearestX) * 4;
+            const destIdx = (y * 512 + x) * 4;
+
+            // 复制RGBA值
+            destData[destIdx] = srcData[srcIdx];         // R
+            destData[destIdx + 1] = srcData[srcIdx + 1]; // G
+            destData[destIdx + 2] = srcData[srcIdx + 2]; // B
+            destData[destIdx + 3] = srcData[srcIdx + 3]; // A
+        }
+    }
+    destCtx.putImageData(destImageData, 0, 0);
+    b64 = destCanvas.toDataURL('image/png')
+    sourceCanvas.remove()
+    destCanvas.remove()
+    return b64;
 }
