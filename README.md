@@ -43,7 +43,7 @@
         * main/  `主模块路径`
             * assets/
             * data/
-        * version_add_1/  `版本路径`
+        * version_add_1/  `版本模块路径`
             * assets/
             * data/
     * icon.png  `图标`
