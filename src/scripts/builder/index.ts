@@ -178,15 +178,17 @@ export class Builder {
         const mc_version = minecraft_version[version]
         const basePath = Builder.getBasePath(config)
         const metaJson = {
-            description: [
-                {
-                    "text": `\u00a76\u00a7l${config.description} v${config.version}\n`
-                },
-                {
-                    "text": `\u00a7a\u00a7lby \u00a76\u00a7l${config.author}`
-                }
-            ],
-            pack_format: type === "data" ? mc_version.datapack_version : mc_version.resources_version
+            pack: {
+                description: [
+                    {
+                        "text": `\u00a76\u00a7l${config.description} v${config.version}\n`
+                    },
+                    {
+                        "text": `\u00a7a\u00a7lby \u00a76\u00a7l${config.author}`
+                    }
+                ],
+                pack_format: type === "data" ? mc_version.datapack_version : mc_version.resources_version
+            }
         }
         let moduleList: { path: string, weight: number, files?: FileOrTree }[] = []
         for (let key of modules.keys()) {
