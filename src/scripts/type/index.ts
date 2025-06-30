@@ -15,6 +15,7 @@ export interface ConfigJson {
     base_path: string
     sets_path?: string
     icon?: string
+    license?: string
     main_module: string
     type?: "resource" | "data"
     suggested_version?: string

@@ -84,6 +84,7 @@
 | icon              | string?                         | 图标                 |
 | type              | "resource"/"data"/undefined     | 类型                 |
 | suggested_version | string?                         | 建议的 `Minecraft` 版本 |
+| license           | string?                         | 开源协议，默认为 `ARR`     |
 | main_module       | string                          | 主模块                |
 | version_modules   | {[key: string]: VersionModule}? | 版本模块               |
 

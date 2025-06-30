@@ -128,6 +128,17 @@ export class Builder {
         }
     }
 
+    private static fileToZip(zip: JSZip, b64: string, path: string) {
+        const cleanBase64 = b64.replace(/\s+/g, '');
+        const binaryString = atob(cleanBase64);
+        const buffer = new ArrayBuffer(binaryString.length);
+        const bytes = new Uint8Array(buffer);
+        for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        zip.file(path, buffer)
+    }
+
     private static fileTreeToZip(zip: JSZip, file: FileOrTree, type: "all" | "resource" | "data") {
         if (
             type === "data"
@@ -149,14 +160,7 @@ export class Builder {
                 Builder.fileTreeToZip(zip, child, type)
             }
         } else if (file.content) {
-            const cleanBase64 = file.content.replace(/\s+/g, '');
-            const binaryString = atob(cleanBase64);
-            const buffer = new ArrayBuffer(binaryString.length);
-            const bytes = new Uint8Array(buffer);
-            for (let i = 0; i < binaryString.length; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
-            }
-            zip.file(file.path, buffer)
+            Builder.fileToZip(zip, file.content, file.path)
         }
     }
 
@@ -168,12 +172,94 @@ export class Builder {
         return basePath
     }
 
+    public static buildModZip(
+        zip: JSZip,
+        config: ConfigJson
+    ) {
+        const modID = config.pack_name.toLowerCase().replace(/[^a-z0-9]/g, '_')
+        const license = `${config.license ?? 'All Right Reserved'}`
+        const modsToml = `
+modLoader = "lowcodefml"
+loaderVersion = "[25,)"
+license="${license}"
+[[mods]]
+modId = "${modID}"
+version = "${config.version}"
+displayName = "${config.pack_name}"
+description = "${config.description}"
+logoFile = "pack.png"
+authors = "${config.author}"
+        `.trim()
+        const neoForgeModsToml = `
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license="${license}"
+[[mods]]
+modId = "${modID}"
+version = "${config.version}"
+displayName = "${config.pack_name}"
+description = "${config.description}"
+logoFile = "pack.png"
+authors = "${config.author}"
+        `.trim()
+        zip.folder("META-INF")
+        zip.file("META-INF/mods.toml", modsToml)
+        zip.file("META-INF/neoforge.mods.toml", neoForgeModsToml)
+        const authors: string[] = []
+        const fabricModJson = {
+            id: modID,
+            version: config.version,
+            name: config.pack_name,
+            description: config.description,
+            authors: authors,
+            contact: {},
+            icon: "pack.png",
+            license: license,
+            environment: "*",
+            depends: {
+                "fabric-resource-loader-v0": "*"
+            }
+        }
+        const contributors: { [key: string]: string } = {}
+        const quiltModJson = {
+            quilt_loader: {
+                group: "dev.xekr",
+                id: modID,
+                version: config.version,
+                metadata: {
+                    name: config.pack_name,
+                    description: config.description,
+                    contributors: contributors,
+                    contact: {},
+                    license: license,
+                    icon: "pack.png"
+                },
+                intermediate_mappings: "net.fabricmc:intermediary",
+                depends: [
+                    {
+                        id: "quilt_resource_loader",
+                        versions: "*",
+                        unless: "fabric-resource-loader-v0"
+                    }
+                ]
+            }
+        }
+        for (let string of config.author.split(",")) {
+            string = string.trim()
+            fabricModJson.authors.push(string)
+            quiltModJson.quilt_loader.metadata.contributors[string] = ""
+        }
+        Builder.fileToZip(zip, utob(JSON.stringify(fabricModJson, null, 4)), "fabric.mod.json")
+        Builder.fileToZip(zip, utob(JSON.stringify(quiltModJson, null, 4)), "quilt.mod.json")
+    }
+
     public static async build(
         repo: string,
         config: ConfigJson,
         modules: Map<string, number>,
         type: "all" | "resource" | "data" = "all",
-        version: string
+        version: string,
+        mod: boolean = false
     ): Promise<Blob> {
         const mc_version = minecraft_version[version]
         const basePath = Builder.getBasePath(config)
@@ -225,13 +311,16 @@ export class Builder {
             }
         }
         if (config.icon) {
-            pack.children?.push(await Builder.getFileTree(repo, basePath, config.icon, type, mc_version))
+            const icon = await Builder.getFileTree(repo, basePath, config.icon, type, mc_version)
+            icon.path = "pack.png"
+            pack.children?.push(icon)
         }
         for (let module of moduleList) {
             pack = Builder.mergeFileOrTree(pack, module.files!!)
         }
         const zip: JSZip = new JSZip()
         Builder.fileTreeToZip(zip, pack, type)
+        if (mod) Builder.buildModZip(zip, config)
         return await zip.generateAsync({type: "blob"});
     }
 }

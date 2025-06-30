@@ -125,6 +125,7 @@ const selectedModules: Ref<string[]> = ref([])
 const selectedSet: Ref<string | undefined> = ref(undefined)
 const selectedMinecraft: Ref<string> = ref("1.21.7")
 const selectedType: Ref<'all' | 'resource' | 'data'> = ref("all")
+const buildToMod = ref(false)
 const building = ref(false)
 const icon = ref("")
 const progress = ref(false)
@@ -284,11 +285,12 @@ function build() {
       config.value,
       mods,
       selectedType.value,
-      selectedMinecraft.value
+      selectedMinecraft.value,
+      buildToMod.value
   ).then((blob) => {
     building.value = false
     Message.success("构建成功")
-    saveAs(blob, `${config.value.pack_name}-${config.value.version}-${selectedType.value}-mc${selectedMinecraft.value}.zip`)
+    saveAs(blob, `${config.value.pack_name}-${config.value.version}-${selectedType.value}-mc${selectedMinecraft.value}.${buildToMod.value ? "jar" : "zip"}`)
   }).catch(e => {
     building.value = false
     Message.error("构建失败")
@@ -403,13 +405,18 @@ function build() {
                 </div>
               </a-select>
             </a-form-item>
-            <a-form-item label="选择类型">
-              <a-select v-model="selectedType" :disabled="isLoading || building">
-                <a-option value="all">全部</a-option>
-                <a-option value="resource">资源包</a-option>
-                <a-option value="data">数据包</a-option>
-              </a-select>
-            </a-form-item>
+            <div style="display: flex">
+              <a-form-item label="选择类型">
+                <a-select v-model="selectedType" :disabled="isLoading || building">
+                  <a-option value="all">全部</a-option>
+                  <a-option value="resource">资源包</a-option>
+                  <a-option value="data">数据包</a-option>
+                </a-select>
+              </a-form-item>
+              <a-form-item style="margin-left: 20px" label="构建模组">
+                <a-checkbox v-model="buildToMod"/>
+              </a-form-item>
+            </div>
             <a-button @click="build" :loading="building">构建</a-button>
           </a-form>
         </div>
