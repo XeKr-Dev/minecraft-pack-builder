@@ -6,7 +6,8 @@
 
 > 本系统基于 `GitHub API` 实现，由于未登录用户访问限制每小时仅能发起 `60` 个 请求，请先在
 > [`GitHub`](https://github.com/settings/tokens/new)
-> 上创建一个 `Personal Access Token` ，并于右上角登录， 需勾选的权限为： `public_repo` 与 `read:project` ，
+> 上创建一个 `Personal Access Token` ，并于右上角登录， 需勾选的权限为： `public_repo` 与 `read:project`
+
 > 本系统没有后端，`Personal Access Token` 在本地存储
 
 * 在页面顶端的`仓库地址`处填写资源包/数据包所在的仓库地址，或者直接访问由作者提供的链接，它们通常已经包含了需要的仓库地址
