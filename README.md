@@ -73,17 +73,19 @@
 }
 ```
 
-| 字段              | 类型                              | 描述   |
-|-----------------|---------------------------------|------|
-| pack_name       | string                          | 名称   |
-| author          | string                          | 作者   |
-| description     | string                          | 描述   |
-| version         | string                          | 版本   |
-| base_path       | string                          | 资源路径 |
-| sets_path       | string?                         | 集合路径 |
-| icon            | string?                         | 图标   |
-| main_module     | string                          | 主模块  |
-| version_modules | {[key: string]: VersionModule}? | 版本模块 |
+| 字段                | 类型                              | 描述                 |
+|-------------------|---------------------------------|--------------------|
+| pack_name         | string                          | 名称                 |
+| author            | string                          | 作者                 |
+| description       | string                          | 描述                 |
+| version           | string                          | 版本                 |
+| base_path         | string                          | 资源路径               |
+| sets_path         | string?                         | 集合路径               |
+| icon              | string?                         | 图标                 |
+| type              | "resource"/"data"/undefined     | 类型                 |
+| suggested_version | string?                         | 建议的 `Minecraft` 版本 |
+| main_module       | string                          | 主模块                |
+| version_modules   | {[key: string]: VersionModule}? | 版本模块               |
 
 #### `VersionModule`
 

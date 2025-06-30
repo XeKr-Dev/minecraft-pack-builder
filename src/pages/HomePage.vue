@@ -123,7 +123,7 @@ const modules: Ref<Map<string, ModuleConfigJson>> = ref(new Map())
 const sets: Ref<Map<string, SetConfigJson>> = ref(new Map())
 const selectedModules: Ref<string[]> = ref([])
 const selectedSet: Ref<string | undefined> = ref(undefined)
-const selectedMinecraft: Ref<string> = ref("1.21.6")
+const selectedMinecraft: Ref<string> = ref("1.21.7")
 const selectedType: Ref<'all' | 'resource' | 'data'> = ref("all")
 const building = ref(false)
 const icon = ref("")
@@ -157,6 +157,8 @@ async function loadRepo() {
     readme.value = btou(readmeData.content)
     const configData = await GithubAPI.getRepoContents(repo.value, "config.json")
     config.value = JSON.parse(btou(configData.content)) as ConfigJson
+    if (config.value.suggested_version) selectedMinecraft.value = config.value.suggested_version
+    if (config.value.type) selectedType.value = config.value.type
     if (config.value.icon) {
       GithubAPI.getRepoContents(repo.value, config.value.icon).then(iconData => {
         imageMagnify(`${BASE_64_PNG_PREFIX}${iconData.content}`).then(b64 => {
@@ -351,7 +353,7 @@ function build() {
           {{ repo }}
         </template>
         <div style="padding: 15px; height: 10px">
-          <fake-progress v-if="progress" v-model="building" />
+          <fake-progress v-if="progress" v-model="building"/>
         </div>
         <div style="display: flex">
           <a-image :src="icon" style="margin: 10px;image-rendering: crisp-edges" :width="200" :height="200"/>

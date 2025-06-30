@@ -15,7 +15,7 @@ function mounted() {
     } else {
       process = 0
     }
-    percent.value = getProcess(process) * 100
+    percent.value = getProcess(process)
   }, 1)
 }
 
