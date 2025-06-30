@@ -3,6 +3,7 @@ import {GithubAPI} from "@/scripts/github";
 import {utob} from "@/scripts/util";
 import JSZip from "jszip";
 import mc_version from '@/minecraft_version.json'
+import {PathFormatter, RecipeFormatter} from "@/scripts/formatter";
 
 const minecraft_version: {
     [key: string]: {
@@ -75,59 +76,20 @@ export class Builder {
         return file
     }
 
-    private static preprocessPath(
+    private static preprocessContent(
+        content: string,
         path: string,
         version: {
             datapack_version: number,
             resources_version: number
         }
     ) {
-        const pathSplit: string[] = path.split("/")
-        if (version.datapack_version >= 45) {
-            if (pathSplit[2] === "structures") {
-                pathSplit[2] = "structure"
-            } else if (pathSplit[2] === "advancements") {
-                pathSplit[2] = "advancement"
-            } else if (pathSplit[2] === "recipes") {
-                pathSplit[2] = "recipe"
-            } else if (pathSplit[2] === "loot_tables") {
-                pathSplit[2] = "loot_table"
-            } else if (pathSplit[2] === "predicates") {
-                pathSplit[2] = "predicate"
-            } else if (pathSplit[2] === "item_modifiers") {
-                pathSplit[2] = "item_modifier"
-            } else if (pathSplit[2] === "functions") {
-                pathSplit[2] = "function"
-            }
-        } else {
-            if (pathSplit[2] === "structure") {
-                pathSplit[2] = "structures"
-            } else if (pathSplit[2] === "advancement") {
-                pathSplit[2] = "advancements"
-            } else if (pathSplit[2] === "recipe") {
-                pathSplit[2] = "recipes"
-            } else if (pathSplit[2] === "loot_table") {
-                pathSplit[2] = "loot_tables"
-            } else if (pathSplit[2] === "predicate") {
-                pathSplit[2] = "predicates"
-            } else if (pathSplit[2] === "item_modifier") {
-                pathSplit[2] = "item_modifiers"
-            } else if (pathSplit[2] === "function") {
-                pathSplit[2] = "functions"
-            }
+        const pathSplit = path.split("/")
+        const type = pathSplit[2]
+        if (!type) return content
+        if (type === "recipe" || type === "recipes") {
+            content = RecipeFormatter.format(content, version)
         }
-        path = pathSplit.join("/")
-        return path
-    }
-
-    private static preprocessContent(
-        content: string,
-        _path: string,
-        _version: {
-            datapack_version: number,
-            resources_version: number
-        }
-    ) {
         return content
     }
 
@@ -144,7 +106,7 @@ export class Builder {
         const data = await GithubAPI.getRepoContents(repo, path) as RepoContents
         let curPath = Builder.processPath(basePath, path)
         if (Array.isArray(data)) {
-            const tree: FileOrTree = {path: Builder.preprocessPath(curPath, version), children: []}
+            const tree: FileOrTree = {path: PathFormatter.format(curPath, version), children: []}
             for (let datum of data) {
                 const filePath = Builder.processPath(basePath, datum.path)
                 if (datum.path.endsWith('config.json')) continue
@@ -159,9 +121,10 @@ export class Builder {
             return tree
         }
         curPath = Builder.processPath(basePath, data.path)
+        const filePath = PathFormatter.format(curPath, version)
         return {
-            content: this.preprocessContent(data.content, curPath, version),
-            path: Builder.preprocessPath(curPath, version)
+            content: this.preprocessContent(data.content, filePath, version),
+            path: filePath
         }
     }
 
