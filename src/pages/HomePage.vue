@@ -225,6 +225,7 @@ const ghp = ref("")
 
 function login() {
   localStorage.setItem("ghp", ghp.value)
+  Message.success("Token 设置成功")
 }
 
 function checkModuleDisabled(key: string) {
