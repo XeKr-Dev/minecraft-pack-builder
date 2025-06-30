@@ -370,9 +370,15 @@ function build() {
               <a-select v-model="selectedMinecraft" :disabled="isLoading || building" allow-search>
                 <div v-for="(value,key) in minecraft_version" :key="key">
                   <a-option :value="key" :label="key">
-                    <a-tag class="page-tag" style="width: 110px">{{ key }}</a-tag>
-                    <a-tag class="page-tag" color="red">资源包：{{ value.resources_version }}</a-tag>
-                    <a-tag class="page-tag" color="blue">数据包：{{ value.datapack_version }}</a-tag>
+                    <a-tag class="page-tag" style="width: 150px">
+                      {{ key }}
+                    </a-tag>
+                    <a-tag class="page-tag" style="width: 80px" color="red">
+                      资源包：{{ value.resources_version }}
+                    </a-tag>
+                    <a-tag class="page-tag" style="width: 80px" color="blue">
+                      数据包：{{ value.datapack_version }}
+                    </a-tag>
                   </a-option>
                 </div>
               </a-select>
