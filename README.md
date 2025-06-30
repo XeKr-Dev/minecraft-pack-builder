@@ -98,6 +98,7 @@
   "module_name": "minecraft-pack-template-module",
   "description": "测试用",
   "support_version": "*",
+  "weight": 0,
   "breaks": [
     "add_3"
   ]
@@ -109,6 +110,7 @@
 | module_name     | string  | 模块名称   |
 | description     | string? | 模块描述   |
 | support_version | string  | 支持的版本  |
+| weight          | number  | 模块权重   |
 | breaks          | array   | 不兼容的模块 |
 
 ### `*.set.config.json`
