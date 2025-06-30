@@ -9,6 +9,7 @@ import type {ConfigJson, ModuleConfigJson, SetConfigJson} from "@/scripts/type";
 import {Builder} from "@/scripts/builder";
 import {saveAs} from 'file-saver';
 import mc_version from '@/minecraft_version.json'
+import FakeProgress from "@/components/FakeProgress.vue";
 
 const BASE_64_PNG_PREFIX = 'data:image/png;base64, '
 const minecraft_version: {
@@ -126,9 +127,11 @@ const selectedMinecraft: Ref<string> = ref("1.21.6")
 const selectedType: Ref<'all' | 'resource' | 'data'> = ref("all")
 const building = ref(false)
 const icon = ref("")
+const progress = ref(false)
 
 async function loadRepo() {
   try {
+    progress.value = false
     isLoaded.value = false
     isLoading.value = true
     config.value = {} as ConfigJson
@@ -168,6 +171,7 @@ async function loadRepo() {
     Message.success("加载成功")
   } catch (e: any) {
     console.error(e)
+    progress.value = false
     isLoaded.value = false
     isLoading.value = false
     config.value = {} as ConfigJson
@@ -272,6 +276,7 @@ function build() {
     mods.set(key, value.weight)
   }
   building.value = true
+  progress.value = true
   Builder.build(
       repo.value,
       config.value,
@@ -345,6 +350,9 @@ function build() {
         <template v-if="repo !== ''" #title>
           {{ repo }}
         </template>
+        <div style="padding: 15px; height: 10px">
+          <fake-progress v-if="progress" v-model="building" />
+        </div>
         <div style="display: flex">
           <a-image :src="icon" style="margin: 10px;image-rendering: crisp-edges" :width="200" :height="200"/>
           <a-form :model="{}" :auto-label-width="true">
