@@ -1,4 +1,8 @@
 {
+  "1.21.7": {
+    "datapack_version": 81,
+    "resources_version": 64
+  },
   "1.21.7-rc2": {
     "datapack_version": 81,
     "resources_version": 64
