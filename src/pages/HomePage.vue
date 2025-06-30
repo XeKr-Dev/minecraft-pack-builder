@@ -320,6 +320,8 @@ function build() {
         <template #title>
           公告
         </template>
+        本页面是一个 <code>纯静态页面</code> ，部署于 <code>GitHub Pages</code>
+        <a-divider/>
         本系统基于 <code>GitHub API</code> 实现，由于未登录用户访问限制每小时仅能发起 <code>60</code> 个 请求，请先在
         <a-link href="https://github.com/settings/tokens/new" target="_blank"><code>GitHub</code></a-link>
         上创建一个 <code>Personal Access Token</code> ，并于右上角登录，
