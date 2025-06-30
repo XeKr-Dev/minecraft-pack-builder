@@ -2,6 +2,14 @@ import type {ConfigJson} from "@/scripts/type";
 import {GithubAPI} from "@/scripts/github";
 import {utob} from "@/scripts/util";
 import JSZip from "jszip";
+import mc_version from '@/minecraft_version.json'
+
+const minecraft_version: {
+    [key: string]: {
+        datapack_version: number,
+        resources_version: number
+    }
+} = mc_version
 
 interface RepoFileContent {
     name: string,
@@ -202,14 +210,9 @@ export class Builder {
         config: ConfigJson,
         modules: Map<string, number>,
         type: "all" | "resource" | "data" = "all",
-        version: {
-            datapack_version: number,
-            resources_version: number
-        } = {
-            datapack_version: 48,
-            resources_version: 35
-        }
+        version: string
     ): Promise<Blob> {
+        const mc_version = minecraft_version[version]
         const basePath = Builder.getBasePath(config)
         const metaJson = {
             description: [
@@ -220,7 +223,7 @@ export class Builder {
                     "text": `\u00a7a\u00a7lby \u00a76\u00a7l${config.author}`
                 }
             ],
-            pack_format: type === "data" ? version.datapack_version : version.resources_version
+            pack_format: type === "data" ? mc_version.datapack_version : mc_version.resources_version
         }
         let moduleList: { path: string, weight: number, files?: FileOrTree }[] = []
         for (let key of modules.keys()) {
@@ -230,15 +233,31 @@ export class Builder {
             })
         }
         for (let module of moduleList) {
-            module.files = await Builder.getFileTree(repo, basePath, module.path, type, version)
+            module.files = await Builder.getFileTree(repo, basePath, module.path, type, mc_version)
         }
         moduleList = moduleList.sort((a, b) => a.weight - b.weight)
-        let pack: FileOrTree = await Builder.getFileTree(repo, basePath, `${basePath}/${config.main_module}`, type, version)
+        let pack: FileOrTree = await Builder.getFileTree(repo, basePath, `${basePath}/${config.main_module}`, type, mc_version)
         pack.children?.push({
             path: "pack.mcmeta",
             content: utob(JSON.stringify(metaJson, null, 2))
         })
-        pack.children?.push(await Builder.getFileTree(repo, basePath, config.icon, type, version))
+        let versionModule = config.version_modules[version]
+        if (!versionModule) {
+            let cont = true
+            for (let key in minecraft_version) {
+                if (key === version) cont = false
+                if (cont) continue
+                const mod = config.version_modules[key]
+                if (!mod) continue
+                if (mod.strict && key !== version) continue
+                versionModule = mod
+                if (versionModule) break
+            }
+        }
+        if (versionModule) {
+            pack.children?.push(await Builder.getFileTree(repo, basePath, `${basePath}/${versionModule.module}`, type, mc_version))
+        }
+        pack.children?.push(await Builder.getFileTree(repo, basePath, config.icon, type, mc_version))
         for (let module of moduleList) {
             pack = Builder.mergeFileOrTree(pack, module.files!!)
         }

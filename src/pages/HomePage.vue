@@ -181,6 +181,15 @@ async function loadModules() {
   const basePath = Builder.getBasePath(config.value)
   const data = await GithubAPI.getRepoContents(repo.value, basePath)
   for (const path of data) {
+    let cont = false;
+    for (let key in config.value.version_modules) {
+      const versionModule = config.value.version_modules[key]
+      if (versionModule.module == path.name) {
+        cont = true
+        break
+      }
+    }
+    if (cont) continue;
     if (path.name == config.value.main_module) {
       continue
     }
@@ -261,14 +270,15 @@ function build() {
       config.value,
       mods,
       selectedType.value,
-      minecraft_version[selectedMinecraft.value]
+      selectedMinecraft.value
   ).then((blob) => {
     building.value = false
     Message.success("构建成功")
-    saveAs(blob, `${config.value.pack_name}-${config.value.version}-${selectedType.value}.zip`)
-  }).catch(_ => {
+    saveAs(blob, `${config.value.pack_name}-${config.value.version}-${selectedType.value}-mc${selectedMinecraft.value}.zip`)
+  }).catch(e => {
     building.value = false
     Message.error("构建失败")
+    console.error(e)
   })
 }
 
@@ -357,7 +367,7 @@ function build() {
               </a-select>
             </a-form-item>
             <a-form-item label="选择版本">
-              <a-select v-model="selectedMinecraft" :disabled="isLoading || building">
+              <a-select v-model="selectedMinecraft" :disabled="isLoading || building" allow-search>
                 <div v-for="(value,key) in minecraft_version" :key="key">
                   <a-option :value="key" :label="key">
                     <a-tag class="page-tag" style="width: 110px">{{ key }}</a-tag>
