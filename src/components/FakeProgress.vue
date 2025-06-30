@@ -21,7 +21,7 @@ onMounted(mounted)
 
 function getProcess() {
   let pro = 0.99 * (1 - Math.exp(-0.1 * process.value / 100 / 60))
-  pro = Math.min(pro, 0.99)
+  pro = Math.min(pro, 0.9999)
   if (!processing.value) {
     return 1.0
   }
