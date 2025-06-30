@@ -155,8 +155,11 @@ async function loadRepo() {
     const configData = await GithubAPI.getRepoContents(repo.value, "config.json")
     config.value = JSON.parse(btou(configData.content)) as ConfigJson
     if (config.value.icon) {
-      const iconData = await GithubAPI.getRepoContents(repo.value, config.value.icon)
-      icon.value = await imageMagnify(`${BASE_64_PNG_PREFIX}${iconData.content}`)
+      GithubAPI.getRepoContents(repo.value, config.value.icon).then(iconData => {
+        imageMagnify(`${BASE_64_PNG_PREFIX}${iconData.content}`).then(b64 => {
+          icon.value = b64
+        })
+      })
     }
     await loadModules()
     await loadSets()
@@ -182,11 +185,13 @@ async function loadModules() {
   const data = await GithubAPI.getRepoContents(repo.value, basePath)
   for (const path of data) {
     let cont = false;
-    for (let key in config.value.version_modules) {
-      const versionModule = config.value.version_modules[key]
-      if (versionModule.module == path.name) {
-        cont = true
-        break
+    if (config.value.version_modules) {
+      for (let key in config.value.version_modules) {
+        const versionModule = config.value.version_modules[key]
+        if (versionModule.module == path.name) {
+          cont = true
+          break
+        }
       }
     }
     if (cont) continue;
@@ -200,6 +205,7 @@ async function loadModules() {
 }
 
 async function loadSets() {
+  if (!config.value.sets_path) return;
   const setsPath = config.value.sets_path
   const data = await GithubAPI.getRepoContents(repo.value, setsPath)
   for (const path of data) {

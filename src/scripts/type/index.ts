@@ -13,10 +13,10 @@ export interface ConfigJson {
     description: string,
     version: string,
     base_path: string,
-    sets_path: string,
-    icon: string,
+    sets_path?: string,
+    icon?: string,
     main_module: string,
-    version_modules: VersionModules,
+    version_modules?: VersionModules,
 }
 
 export interface ModuleConfigJson {

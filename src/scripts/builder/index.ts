@@ -204,23 +204,27 @@ export class Builder {
             path: "pack.mcmeta",
             content: utob(JSON.stringify(metaJson, null, 2))
         })
-        let versionModule = config.version_modules[version]
-        if (!versionModule) {
-            let cont = true
-            for (let key in minecraft_version) {
-                if (key === version) cont = false
-                if (cont) continue
-                const mod = config.version_modules[key]
-                if (!mod) continue
-                if (mod.strict && key !== version) continue
-                versionModule = mod
-                if (versionModule) break
+        if (config.version_modules) {
+            let versionModule = config.version_modules[version]
+            if (!versionModule) {
+                let cont = true
+                for (let key in minecraft_version) {
+                    if (key === version) cont = false
+                    if (cont) continue
+                    const mod = config.version_modules[key]
+                    if (!mod) continue
+                    if (mod.strict && key !== version) continue
+                    versionModule = mod
+                    if (versionModule) break
+                }
+            }
+            if (versionModule) {
+                pack.children?.push(await Builder.getFileTree(repo, basePath, `${basePath}/${versionModule.module}`, type, mc_version))
             }
         }
-        if (versionModule) {
-            pack.children?.push(await Builder.getFileTree(repo, basePath, `${basePath}/${versionModule.module}`, type, mc_version))
+        if (config.icon) {
+            pack.children?.push(await Builder.getFileTree(repo, basePath, config.icon, type, mc_version))
         }
-        pack.children?.push(await Builder.getFileTree(repo, basePath, config.icon, type, mc_version))
         for (let module of moduleList) {
             pack = Builder.mergeFileOrTree(pack, module.files!!)
         }
