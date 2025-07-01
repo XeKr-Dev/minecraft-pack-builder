@@ -93,7 +93,7 @@ export class Builder {
         return content
     }
 
-    private static async getFileTree(
+    private static getFileTree(
         repo: string,
         basePath: string,
         path: string,
@@ -103,29 +103,42 @@ export class Builder {
             resources_version: number
         }
     ): Promise<FileOrTree> {
-        const data = await GithubAPI.getRepoContents(repo, path) as RepoContents
-        let curPath = Builder.processPath(basePath, path)
-        if (Array.isArray(data)) {
-            const tree: FileOrTree = {path: PathFormatter.format(curPath, version), children: []}
-            for (let datum of data) {
-                const filePath = Builder.processPath(basePath, datum.path)
-                if (datum.path.endsWith('config.json')) continue
-                if (type === "resource" && filePath.startsWith(`data/`)) {
-                    continue
+        return new Promise<FileOrTree>(resolve => {
+            const promises: Promise<any>[] = []
+            GithubAPI.getRepoContents(repo, path).then(res => {
+                const data = res as RepoContents
+                let curPath = Builder.processPath(basePath, path)
+                if (!Array.isArray(data)) {
+                    curPath = Builder.processPath(basePath, data.path)
+                    const filePath = PathFormatter.format(curPath, version)
+                    Promise.all(promises).then(() => {
+                        resolve({
+                            content: this.preprocessContent(data.content, filePath, version),
+                            path: filePath
+                        })
+                    })
+                    return
                 }
-                if (type === "data" && filePath.startsWith(`assets/`)) {
-                    continue
+                const tree: FileOrTree = {path: PathFormatter.format(curPath, version), children: []}
+                for (let datum of data) {
+                    const filePath = Builder.processPath(basePath, datum.path)
+                    if (datum.path.endsWith('config.json')) continue
+                    if (type === "resource" && filePath.startsWith(`data/`)) {
+                        continue
+                    }
+                    if (type === "data" && filePath.startsWith(`assets/`)) {
+                        continue
+                    }
+                    const promise = Builder.getFileTree(repo, basePath, datum.path, type, version).then(file => {
+                        tree.children?.push(file)
+                    })
+                    promises.push(promise)
                 }
-                tree.children?.push(await Builder.getFileTree(repo, basePath, datum.path, type, version))
-            }
-            return tree
-        }
-        curPath = Builder.processPath(basePath, data.path)
-        const filePath = PathFormatter.format(curPath, version)
-        return {
-            content: this.preprocessContent(data.content, filePath, version),
-            path: filePath
-        }
+                Promise.all(promises).then(() => {
+                    resolve(tree)
+                })
+            })
+        })
     }
 
     private static fileToZip(zip: JSZip, b64: string, path: string) {
@@ -253,7 +266,7 @@ authors = "${config.author}"
         Builder.fileToZip(zip, utob64(JSON.stringify(quiltModJson, null, 4)), "quilt.mod.json")
     }
 
-    public static async build(
+    public static build(
         repo: string,
         config: ConfigJson,
         modules: Map<string, number>,
@@ -283,44 +296,55 @@ authors = "${config.author}"
                 weight: modules.get(key)!!
             })
         }
+        const promises: Promise<any>[] = []
         for (let module of moduleList) {
-            module.files = await Builder.getFileTree(repo, basePath, module.path, type, mc_version)
+            const promise = Builder.getFileTree(repo, basePath, module.path, type, mc_version).then(tree => module.files = tree)
+            promises.push(promise)
         }
         moduleList = moduleList.sort((a, b) => a.weight - b.weight)
-        let pack: FileOrTree = await Builder.getFileTree(repo, basePath, `${basePath}/${config.main_module}`, type, mc_version)
-        pack.children?.push({
-            path: "pack.mcmeta",
-            content: utob64(JSON.stringify(metaJson, null, 2))
-        })
-        if (config.version_modules) {
-            let versionModule = config.version_modules[version]
-            if (!versionModule) {
-                let cont = true
-                for (let key in minecraft_version) {
-                    if (key === version) cont = false
-                    if (cont) continue
-                    const mod = config.version_modules[key]
-                    if (!mod) continue
-                    if (mod.strict && key !== version) continue
-                    versionModule = mod
-                    if (versionModule) break
+        return new Promise<Blob>(resolve => {
+            Builder.getFileTree(repo, basePath, `${basePath}/${config.main_module}`, type, mc_version).then(res => {
+                let pack: FileOrTree = res
+                pack.children?.push({
+                    path: "pack.mcmeta",
+                    content: utob64(JSON.stringify(metaJson, null, 2))
+                })
+                if (config.version_modules) {
+                    let versionModule = config.version_modules[version]
+                    if (!versionModule) {
+                        let cont = true
+                        for (let key in minecraft_version) {
+                            if (key === version) cont = false
+                            if (cont) continue
+                            const mod = config.version_modules[key]
+                            if (!mod) continue
+                            if (mod.strict && key !== version) continue
+                            versionModule = mod
+                            if (versionModule) break
+                        }
+                    }
+                    if (versionModule) {
+                        const promise = Builder.getFileTree(repo, basePath, `${basePath}/${versionModule.module}`, type, mc_version).then(res => pack.children?.push(res))
+                        promises.push(promise)
+                    }
                 }
-            }
-            if (versionModule) {
-                pack.children?.push(await Builder.getFileTree(repo, basePath, `${basePath}/${versionModule.module}`, type, mc_version))
-            }
-        }
-        if (config.icon) {
-            const icon = await Builder.getFileTree(repo, basePath, config.icon, type, mc_version)
-            icon.path = "pack.png"
-            pack.children?.push(icon)
-        }
-        for (let module of moduleList) {
-            pack = Builder.mergeFileOrTree(pack, module.files!!)
-        }
-        const zip: JSZip = new JSZip()
-        Builder.fileTreeToZip(zip, pack, type)
-        if (mod) Builder.buildModZip(zip, config)
-        return await zip.generateAsync({type: "blob"});
+                if (config.icon) {
+                    const promise = Builder.getFileTree(repo, basePath, config.icon, type, mc_version).then(icon => {
+                        icon.path = "pack.png"
+                        pack.children?.push(icon)
+                    })
+                    promises.push(promise)
+                }
+                Promise.all(promises).then(() => {
+                    for (let module of moduleList) {
+                        pack = Builder.mergeFileOrTree(pack, module.files!!)
+                    }
+                    const zip: JSZip = new JSZip()
+                    Builder.fileTreeToZip(zip, pack, type)
+                    if (mod) Builder.buildModZip(zip, config)
+                    zip.generateAsync({type: "blob"}).then(blob => resolve(blob))
+                })
+            })
+        })
     }
 }
