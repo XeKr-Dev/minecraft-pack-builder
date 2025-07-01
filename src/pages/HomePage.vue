@@ -282,7 +282,16 @@ function build() {
                     <a-option value="data">数据包</a-option>
                   </a-select>
                 </a-form-item>
-                <a-form-item style="margin-left: 20px" label="构建模组">
+                <a-form-item style="margin-left: 20px">
+                  <template #label>
+                    <a-tooltip>
+                      <template #content>
+                        构建为模组，可在Fabric/Quilt/Forge/Neoforge中加载
+                      </template>
+                      <icon-question-circle-fill/>
+                    </a-tooltip>
+                    构建模组
+                  </template>
                   <a-checkbox v-model="buildToMod"/>
                 </a-form-item>
               </div>
@@ -295,7 +304,8 @@ function build() {
       </div>
     </div>
     <div class="page-footer">
-      © <a-link href="https://github.com/XeKr-Dev">XeKr-Dev</a-link>
+      ©
+      <a-link href="https://github.com/XeKr-Dev">XeKr-Dev</a-link>
     </div>
   </a-scrollbar>
 </template>
