@@ -139,7 +139,7 @@ export class RecipeFormatter {
         } as RecipeBetween24w10aTo24w33a
         if (convertRecipe.key) {
             resultRecipe.key = {}
-            for (const convertRecipeKey in convertRecipe) {
+            for (const convertRecipeKey in convertRecipe.key) {
                 const value = convertRecipe.key[convertRecipeKey]
                 if (value.startsWith("#")) {
                     resultRecipe.key[convertRecipeKey] = {
@@ -177,10 +177,7 @@ export class RecipeFormatter {
                 }
             }
         }
-        resultRecipe.result = {
-            id: convertRecipe.result.id,
-            count: convertRecipe.result.count
-        }
+        resultRecipe.result = convertRecipe.result
         return resultRecipe;
     }
 

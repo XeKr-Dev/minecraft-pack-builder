@@ -104,22 +104,20 @@ export class Builder {
         }
     ): Promise<FileOrTree> {
         return new Promise<FileOrTree>(resolve => {
-            const promises: Promise<any>[] = []
             GithubAPI.getRepoContents(repo, path).then(res => {
                 const data = res as RepoContents
                 let curPath = Builder.processPath(basePath, path)
                 if (!Array.isArray(data)) {
                     curPath = Builder.processPath(basePath, data.path)
                     const filePath = PathFormatter.format(curPath, version)
-                    Promise.all(promises).then(() => {
-                        resolve({
-                            content: this.preprocessContent(data.content, filePath, version),
-                            path: filePath
-                        })
+                    resolve({
+                        content: this.preprocessContent(data.content, filePath, version),
+                        path: filePath
                     })
                     return
                 }
                 const tree: FileOrTree = {path: PathFormatter.format(curPath, version), children: []}
+                const promises: Promise<any>[] = []
                 for (let datum of data) {
                     const filePath = Builder.processPath(basePath, datum.path)
                     if (datum.path.endsWith('config.json')) continue
