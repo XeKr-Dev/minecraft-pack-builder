@@ -15,6 +15,7 @@ import PageHeader from "@/components/PageHeader.vue";
 const BASE_64_PNG_PREFIX = 'data:image/png;base64, '
 const minecraft_version: {
   [key: string]: {
+    type: "snapshot" | "release",
     datapack_version: number,
     resources_version: number
   }
@@ -36,6 +37,7 @@ const sets: Ref<Map<string, SetConfigJson>> = ref(new Map())
 const selectedModules: Ref<string[]> = ref([])
 const selectedSet: Ref<string | undefined> = ref(undefined)
 const selectedMinecraft: Ref<string> = ref("1.21.7")
+const showSnapshot = ref(false)
 const selectedType: Ref<'all' | 'resource' | 'data'> = ref("all")
 const buildToMod = ref(false)
 const building = ref(false)
@@ -281,23 +283,28 @@ function build() {
                   </div>
                 </a-select>
               </a-form-item>
-              <a-form-item label="选择版本">
-                <a-select v-model="selectedMinecraft" :disabled="isLoading || building" allow-search>
-                  <div v-for="(value,key) in minecraft_version" :key="key">
-                    <a-option :value="key" :label="key">
-                      <a-tag class="page-tag" style="width: 150px">
-                        {{ key }}
-                      </a-tag>
-                      <a-tag class="page-tag" style="width: 80px" color="red">
-                        资源包：{{ value.resources_version }}
-                      </a-tag>
-                      <a-tag class="page-tag" style="width: 80px" color="blue">
-                        数据包：{{ value.datapack_version }}
-                      </a-tag>
-                    </a-option>
-                  </div>
-                </a-select>
-              </a-form-item>
+              <div style="display: flex">
+                <a-form-item label="选择版本">
+                  <a-select v-model="selectedMinecraft" :disabled="isLoading || building" allow-search>
+                    <div v-for="(value,key) in minecraft_version" :key="key">
+                      <a-option v-show="showSnapshot || value.type == 'release'" :value="key" :label="key">
+                        <a-tag class="page-tag" style="width: 150px">
+                          {{ key }}
+                        </a-tag>
+                        <a-tag class="page-tag" style="width: 80px" color="red">
+                          资源包：{{ value.resources_version }}
+                        </a-tag>
+                        <a-tag class="page-tag" style="width: 80px" color="blue">
+                          数据包：{{ value.datapack_version }}
+                        </a-tag>
+                      </a-option>
+                    </div>
+                  </a-select>
+                </a-form-item>
+                <a-form-item style="margin-left: 20px" label="显示快照">
+                  <a-checkbox v-model="showSnapshot"/>
+                </a-form-item>
+              </div>
               <div style="display: flex">
                 <a-form-item label="选择类型">
                   <a-select v-model="selectedType" :disabled="isLoading || building">
