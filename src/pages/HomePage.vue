@@ -19,7 +19,13 @@ const minecraft_version: {
     datapack_version: number,
     resources_version: number
   }
-} = mc_version
+} = mc_version as {
+  [key: string]: {
+    type: "snapshot" | "release",
+    datapack_version: number,
+    resources_version: number
+  }
+}
 
 function getUrl() {
   return window.location.href.split('/#/')[1] || 'XeKr-Dev/minecraft-pack-template'
