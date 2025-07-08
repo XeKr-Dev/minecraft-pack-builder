@@ -231,7 +231,7 @@ class Builder {
 
 ### 用例4：社区模块共享
 
-`场景`：社区开发者贡献新模型模块
+**场景**：社区开发者贡献新模型模块
 
 1. 在仓库中创建new_creatures目录
 2. 添加module.config.json：
