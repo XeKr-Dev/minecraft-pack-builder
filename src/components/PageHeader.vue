@@ -39,9 +39,18 @@ function login() {
 </script>
 
 <template>
-  <a-page-header :show-back="false">
+  <a-page-header class="page-header" :show-back="false">
     <template #title>
-      资源包/数据包构建
+      <div
+          style="display: flex;align-items: center;"
+      >
+        <img
+            style="display: inline-block;width: 2rem;height: 2rem;margin-right: 1rem"
+            src="/icon.svg"
+            alt="icon"
+        />
+        <p style="display: inline-block">资源包/数据包构建</p>
+      </div>
     </template>
     <template #subtitle>
       {{ repo }}
@@ -69,5 +78,9 @@ function login() {
 .btn {
   margin-left: 10px;
   margin-right: 10px;
+}
+
+.page-header {
+  height: 48px;
 }
 </style>
