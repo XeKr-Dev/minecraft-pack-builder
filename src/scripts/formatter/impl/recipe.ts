@@ -18,7 +18,7 @@ interface RecipeLess24w10a {
     result: {
         item: string,
         count?: number
-    }
+    } | string
 }
 
 interface RecipeBetween24w10aTo24w33a {
@@ -121,7 +121,12 @@ export class RecipeFormatter {
                 }
             }
         }
-        if ((recipe.result as { item?: string }).item) {
+        if (typeof (recipe.result) === "string") {
+            resultRecipe.result = {
+                id: recipe.result,
+                count: (recipe.result as { count?: number }).count ?? 1
+            }
+        } else if ((recipe.result as { item?: string }).item) {
             resultRecipe.result = {
                 id: (recipe.result as { item: string }).item,
                 count: (recipe.result as { count?: number }).count ?? 1
