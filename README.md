@@ -65,9 +65,10 @@
   "icon": "./icon.png",
   "main_module": "main",
   "version_modules": {
-    "1.21.1": {
-      "module": "version_add_1",
-      "strict": false
+    "version_add_1": {
+      "version": "1.21.1",
+      "strict": false,
+      "target": "main"
     }
   }
 }
@@ -90,10 +91,11 @@
 
 #### `VersionModule`
 
-| 字段     | 类型      | 描述       |
-|--------|---------|----------|
-| module | string  | 模块路径名称   |
-| strict | boolean | 是否严格匹配版本 |
+| 字段      | 类型      | 描述                 |
+|---------|---------|--------------------|
+| version | string  | 匹配的 `Minecraft` 版本 |
+| strict  | boolean | 是否严格匹配版本           |
+| target  | string? | 要覆盖的模块，默认为主模块      |
 
 ### `module.config.json`
 

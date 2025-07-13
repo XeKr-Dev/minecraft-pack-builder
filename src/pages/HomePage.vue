@@ -121,8 +121,8 @@ function loadModules(): Promise<void> {
         let cont = false;
         if (config.value.version_modules) {
           for (let key in config.value.version_modules) {
-            const versionModule = config.value.version_modules[key]
-            if (versionModule.module == path.name) {
+            // const versionModule = config.value.version_modules[key]
+            if (key == path.name) {
               cont = true
               break
             }

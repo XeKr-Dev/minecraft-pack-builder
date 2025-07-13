@@ -1,11 +1,12 @@
-import type {ConfigJson} from "@/scripts/type";
+import type {ConfigJson, VersionModule} from "@/scripts/type";
 import {GithubAPI} from "@/scripts/github";
 import {utob64} from "@/scripts/util";
 import JSZip from "jszip";
 import mc_version from '@/minecraft_version.json'
 import {PathFormatter, RecipeFormatter} from "@/scripts/formatter";
+import {Version} from "@/scripts/version";
 
-const minecraft_version: {
+const mcVersions: {
     [key: string]: {
         datapack_version: number,
         resources_version: number
@@ -272,7 +273,7 @@ authors = "${config.author}"
         version: string,
         mod: boolean = false
     ): Promise<Blob> {
-        const mc_version = minecraft_version[version]
+        const minecraftVersion = mcVersions[version]
         const basePath = Builder.getBasePath(config)
         const metaJson = {
             pack: {
@@ -284,7 +285,7 @@ authors = "${config.author}"
                         "text": `\u00a7a\u00a7lby \u00a76\u00a7l${config.author}`
                     }
                 ],
-                pack_format: type === "data" ? mc_version.datapack_version : mc_version.resources_version
+                pack_format: type === "data" ? minecraftVersion.datapack_version : minecraftVersion.resources_version
             }
         }
         let moduleList: { path: string, weight: number, files?: FileOrTree }[] = []
@@ -296,46 +297,75 @@ authors = "${config.author}"
         }
         const promises: Promise<any>[] = []
         for (let module of moduleList) {
-            const promise = Builder.getFileTree(repo, basePath, module.path, type, mc_version).then(tree => module.files = tree)
+            const promise = Builder.getFileTree(repo, basePath, module.path, type, minecraftVersion).then(tree => module.files = tree)
             promises.push(promise)
         }
         moduleList = moduleList.sort((a, b) => a.weight - b.weight)
         return new Promise<Blob>(resolve => {
-            Builder.getFileTree(repo, basePath, `${basePath}/${config.main_module}`, type, mc_version).then(res => {
+            Builder.getFileTree(repo, basePath, `${basePath}/${config.main_module}`, type, minecraftVersion).then(res => {
                 let pack: FileOrTree = res
                 pack.children?.push({
                     path: "pack.mcmeta",
                     content: utob64(JSON.stringify(metaJson, null, 2))
                 })
+                const versionModuleMap: {
+                    [key: string]: {
+                        path: string
+                        module: string
+                        version: string
+                        files?: FileOrTree
+                    }
+                } = {}
                 if (config.version_modules) {
-                    let versionModule = config.version_modules[version]
-                    if (!versionModule) {
-                        let cont = true
-                        for (let key in minecraft_version) {
-                            if (key === version) cont = false
-                            if (cont) continue
-                            const mod = config.version_modules[key]
-                            if (!mod) continue
-                            if (mod.strict && key !== version) continue
-                            versionModule = mod
-                            if (versionModule) break
+                    const versionModuleKeys = Object.keys(config.version_modules).filter(key => {
+                        const versionModule: VersionModule = config.version_modules!![key]
+                        if (!versionModule.target || versionModule.target === config.main_module) return true
+                        for (const module of moduleList) {
+                            if (module.path.endsWith(`/${versionModule.target}`)) return true
+                        }
+                        return false
+                    })
+                    for (const versionModuleKey of versionModuleKeys) {
+                        const versionModule: VersionModule = config.version_modules[versionModuleKey]
+                        const moduleMCVersion = mcVersions[versionModule.version];
+                        if (!moduleMCVersion) continue
+                        if (Version.compareMC(version, versionModule.version) < 0) continue
+                        if (versionModule.strict && Version.compareMC(version, versionModule.version) !== 0) continue
+                        const targetKey = versionModule.target || config.main_module
+                        const target = versionModuleMap[targetKey]
+                        if (target && Version.compareMC(target.version, versionModule.version) >= 0) continue
+                        versionModuleMap[targetKey] = {
+                            path: `${basePath}/${versionModuleKey}`,
+                            module: versionModuleKey,
+                            version: versionModule.version
                         }
                     }
-                    if (versionModule) {
-                        const promise = Builder.getFileTree(repo, basePath, `${basePath}/${versionModule.module}`, type, mc_version).then(res => pack.children?.push(res))
+                    for (const versionModuleKey in versionModuleMap) {
+                        const versionModule = versionModuleMap[versionModuleKey]
+                        const promise = Builder.getFileTree(repo, basePath, versionModule.path, type, minecraftVersion).then(res => versionModule.files = res)
                         promises.push(promise)
                     }
                 }
                 if (config.icon) {
-                    const promise = Builder.getFileTree(repo, basePath, config.icon, type, mc_version).then(icon => {
+                    const promise = Builder.getFileTree(repo, basePath, config.icon, type, minecraftVersion).then(icon => {
                         icon.path = "pack.png"
                         pack.children?.push(icon)
                     })
                     promises.push(promise)
                 }
                 Promise.all(promises).then(() => {
+                    if (versionModuleMap[config.main_module]) {
+                        const versionModule = versionModuleMap[config.main_module]
+                        if (versionModule.files) {
+                            pack = Builder.mergeFileOrTree(pack, versionModule.files)
+                        }
+                    }
                     for (let module of moduleList) {
                         pack = Builder.mergeFileOrTree(pack, module.files!!)
+                        const versionModule = versionModuleMap[module.path.substring(basePath.length + 1)]
+                        if (versionModule && versionModule.files) {
+                            pack = Builder.mergeFileOrTree(pack, versionModule.files)
+                        }
                     }
                     const zip: JSZip = new JSZip()
                     Builder.fileTreeToZip(zip, pack, type)

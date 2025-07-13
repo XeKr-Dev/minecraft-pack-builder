@@ -1,6 +1,7 @@
 export interface VersionModule {
-    module: string
+    version: string
     strict: boolean
+    target?: string
 }
 
 export interface VersionModules {

@@ -1,3 +1,14 @@
+import mc_version from "@/minecraft_version.json";
+
+const mcVersions: {
+    [key: string]: {
+        datapack_version: number,
+        resources_version: number
+    }
+} = mc_version
+
+const mcVersionKeys = Object.keys(mcVersions)
+
 export class Version {
     public static readonly POSITIVE_INFINITY = new Version(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
     public static readonly NEGATIVE_INFINITY = new Version(Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY);
@@ -22,6 +33,13 @@ export class Version {
     public static fromString(version: string): Version {
         const parts = version.split('.');
         return new Version(parseInt(parts[0] || '0'), parseInt(parts[1] || '0'), parseInt(parts[2] || '0'));
+    }
+
+    public static compareMC(mcv1: string, mcv2: string): number {
+        const index1 = mcVersionKeys.indexOf(mcv2)
+        const index2 = mcVersionKeys.indexOf(mcv1)
+        if (index1 === -1 || index2 === -1) throw new Error(`Unknown Minecraft version: ${mcv1} or ${mcv2}`)
+        return index1 - index2
     }
 }
 
