@@ -64,6 +64,7 @@
   "sets_path": "./sets",
   "icon": "./icon.png",
   "main_module": "main",
+  "file_mode": false,
   "version_modules": {
     "version_add_1": {
       "version": "1.21.1",
@@ -87,6 +88,7 @@
 | suggested_version | string?                         | 建议的 `Minecraft` 版本 |
 | license           | string?                         | 开源协议，默认为 `ARR`     |
 | main_module       | string                          | 主模块                |
+| file_mode         | boolean?                        | 是否启用从文件构建          |
 | version_modules   | {[key: string]: VersionModule}? | 版本模块               |
 
 #### `VersionModule`

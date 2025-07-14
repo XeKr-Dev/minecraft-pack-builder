@@ -18,6 +18,7 @@ export interface ConfigJson {
     icon?: string
     license?: string
     main_module: string
+    file_mode?: boolean
     type?: "resource" | "data"
     suggested_version?: string
     version_modules?: VersionModules,

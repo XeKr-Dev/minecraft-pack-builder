@@ -11,6 +11,8 @@ import mc_version from '@/minecraft_version.json'
 import FakeProgress from "@/components/FakeProgress.vue";
 import Notice from "@/components/Notice.vue";
 import PageHeader from "@/components/PageHeader.vue";
+import FileSelectorDialog from "@/components/FileSelectorDialog.vue";
+import JSZip from "jszip";
 
 const BASE_64_PNG_PREFIX = 'data:image/png;base64, '
 const minecraft_version: {
@@ -49,6 +51,8 @@ const buildToMod = ref(false)
 const building = ref(false)
 const icon = ref("")
 const progress = ref(false)
+const openFileSelector = ref(false)
+const files = ref<File[]>([])
 
 function loadRepo() {
   try {
@@ -209,11 +213,56 @@ function build() {
     Message.error("请选择构建类型")
     return
   }
+  if (!config.value.file_mode) {
+    const mods: Map<string, number> = new Map()
+    for (const key of selectedModules.value) {
+      const value = modules.value.get(key)
+      if (value == undefined) continue
+      mods.set(key, value.weight)
+    }
+    building.value = true
+    progress.value = true
+    Builder.build(
+        repo.value,
+        config.value,
+        mods,
+        selectedMinecraft.value,
+        selectedType.value,
+        buildToMod.value,
+        "online"
+    ).then((blob) => {
+      building.value = false
+      Message.success("构建成功")
+      saveAs(blob, `${config.value.pack_name}-${config.value.version}-${selectedType.value}-mc${selectedMinecraft.value}.${buildToMod.value ? "jar" : "zip"}`)
+    }).catch(e => {
+      building.value = false
+      Message.error("构建失败")
+      console.error(e)
+    })
+    return;
+  }
+  openFileSelector.value = true
+  GithubAPI.getRepoZip(repo.value)
+}
+
+async function fileSelectorOK() {
+  openFileSelector.value = false
   const mods: Map<string, number> = new Map()
   for (const key of selectedModules.value) {
     const value = modules.value.get(key)
     if (value == undefined) continue
     mods.set(key, value.weight)
+  }
+  const zip = await JSZip.loadAsync(files.value[0], {base64: true})
+  const neoZip = JSZip()
+  for (let filesKey in zip.files) {
+    const neoKey = filesKey.split("/").slice(1).join("/")
+    if (neoKey === "" || neoKey === "/") continue
+    if (filesKey.endsWith("/")) {
+      neoZip.folder(neoKey)
+    } else {
+      neoZip.file(neoKey, await zip.file(filesKey)?.async("uint8array"))
+    }
   }
   building.value = true
   progress.value = true
@@ -221,23 +270,36 @@ function build() {
       repo.value,
       config.value,
       mods,
-      selectedType.value,
       selectedMinecraft.value,
-      buildToMod.value
+      selectedType.value,
+      buildToMod.value,
+      "file",
+      neoZip
   ).then((blob) => {
+    files.value = []
     building.value = false
     Message.success("构建成功")
     saveAs(blob, `${config.value.pack_name}-${config.value.version}-${selectedType.value}-mc${selectedMinecraft.value}.${buildToMod.value ? "jar" : "zip"}`)
   }).catch(e => {
+    files.value = []
     building.value = false
     Message.error("构建失败")
     console.error(e)
   })
 }
 
+function fileSelectorCancel() {
+  openFileSelector.value = false
+}
 </script>
 
 <template>
+  <file-selector-dialog
+      v-model:visible="openFileSelector"
+      v-model:files="files"
+      @ok="fileSelectorOK"
+      @cancel="fileSelectorCancel"
+  />
   <page-header v-model="repo"/>
   <a-scrollbar style="height: calc(100vh - 80px);overflow: auto">
     <div class="repo-input">
