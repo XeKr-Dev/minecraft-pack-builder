@@ -26,7 +26,10 @@ function ok() {
   console.log(files.value)
   if (
       !files.value[0]
-      || files.value[0].type !== "application/x-zip-compressed"
+      || (
+          files.value[0].type !== "application/x-zip-compressed"
+          && files.value[0].type !== "application/zip"
+      )
   ) {
     Message.error("请选择 ZIP 文件")
     return
