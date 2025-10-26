@@ -23,7 +23,11 @@ function onChange(fileList: { file: File }[]) {
 }
 
 function ok() {
-  if (!files.value[0] || files.value[0].type !== "application/x-zip-compressed") {
+  console.log(files.value)
+  if (
+      !files.value[0]
+      || files.value[0].type !== "application/x-zip-compressed"
+  ) {
     Message.error("请选择 ZIP 文件")
     return
   }
@@ -42,8 +46,11 @@ function ok() {
         action="/"
         :limit="1"
         :auto-upload="false"
+        :show-retry-button="false"
+        :show-cancel-button="false"
         ref="uploadRef"
         @change="onChange"
+        :custom-request="()=>{}"
         tip="请将下载到的仓库 ZIP 包拖拽到此处"
     />
   </a-modal>
