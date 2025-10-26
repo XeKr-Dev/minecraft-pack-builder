@@ -170,8 +170,11 @@ async function loadSets(): Promise<void> {
   })
 }
 
-function changeModules() {
+function changeModules(e: string[]) {
   selectedSet.value = undefined
+  for (const moduleKey of e) {
+    selectWithBindings(moduleKey)
+  }
 }
 
 function changeSet() {
@@ -197,7 +200,30 @@ function checkModuleDisabled(key: string) {
       if (`${basePath}/${breakKey}` == key) return true
     }
   }
+  if (self.bindings) {
+    for (let binding of self.bindings) {
+      binding = `${basePath}/${binding}`
+      if (!binding || binding == key) return true
+      if (checkModuleDisabled(binding)) return true
+    }
+  }
   return false
+}
+
+function selectWithBindings(key: string) {
+  const basePath = Builder.getBasePath(config.value)
+  const self = modules.value.get(key)
+  if (self == undefined) return;
+  if (!selectedModules.value.includes(key)) {
+    selectedModules.value.push(key)
+  }
+  if (self.bindings) {
+    for (let binding of self.bindings) {
+      binding = `${basePath}/${binding}`
+      if (!binding || binding == key) return;
+      selectWithBindings(binding)
+    }
+  }
 }
 
 function build() {

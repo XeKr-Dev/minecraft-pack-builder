@@ -29,7 +29,8 @@ export interface ModuleConfigJson {
     description?: string
     support_version: string
     weight: number
-    breaks: string[]
+    breaks: string[],
+    bindings?: string[]
 }
 
 export interface SetConfigJson {

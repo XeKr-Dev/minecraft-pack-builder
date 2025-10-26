@@ -113,13 +113,14 @@
 }
 ```
 
-| 字段              | 类型      | 描述     |
-|-----------------|---------|--------|
-| module_name     | string  | 模块名称   |
-| description     | string? | 模块描述   |
-| support_version | string  | 支持的版本  |
-| weight          | number  | 模块权重   |
-| breaks          | array   | 不兼容的模块 |
+| 字段              | 类型      | 描述              |
+|-----------------|---------|-----------------|
+| module_name     | string  | 模块名称            |
+| description     | string? | 模块描述            |
+| support_version | string  | 支持的版本           |
+| weight          | number  | 模块权重            |
+| breaks          | array   | 不兼容的模块          |
+| bindings        | array?  | 绑定的模块（在选中时同时选中） |
 
 ### `*.set.config.json`
 
