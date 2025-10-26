@@ -37,3 +37,14 @@ export interface SetConfigJson {
     description?: string
     modules: string[]
 }
+
+export interface MetaJson {
+    pack: {
+        description: {
+            text: string
+        }[],
+        pack_format?: number
+        min_format?: [number, number]
+        max_format?: [number, number]
+    }
+}

@@ -1,6 +1,6 @@
 import mc_version from '@/minecraft_version.json'
 import JSZip from "jszip";
-import type {ConfigJson, VersionModule} from "@/scripts/type";
+import type {ConfigJson, MetaJson, VersionModule} from "@/scripts/type";
 import {RecipeFormatter} from "@/scripts/formatter";
 import {utob64} from "@/scripts/util";
 import {Version} from "@/scripts/version";
@@ -265,7 +265,8 @@ authors = "${this.config.author}"
     public build(): Promise<Blob> {
         const minecraftVersion = mcVersions[this.version]
         const basePath = this.getBasePath()
-        const metaJson = {
+        const packFormat = this.type === "data" ? minecraftVersion.datapack_version : minecraftVersion.resources_version;
+        const metaJson: MetaJson = {
             pack: {
                 description: [
                     {
@@ -275,8 +276,15 @@ authors = "${this.config.author}"
                         "text": `\u00a7a\u00a7lby \u00a76\u00a7l${this.config.author}`
                     }
                 ],
-                pack_format: this.type === "data" ? minecraftVersion.datapack_version : minecraftVersion.resources_version
+                pack_format: packFormat
             }
+        }
+        if (
+            (this.type === "data" && packFormat >= 82)
+            || (packFormat >= 65)
+        ) {
+            metaJson.pack["min_format"] = [Math.floor(packFormat), parseInt(packFormat.toString().split(".")[1])]
+            metaJson.pack["max_format"] = [Math.floor(packFormat), parseInt(packFormat.toString().split(".")[1])]
         }
         let moduleList: { path: string, weight: number, files?: FileOrTree }[] = []
         for (let key of this.modules.keys()) {
