@@ -351,48 +351,60 @@ function fileSelectorCancel() {
                   </div>
                 </a-select>
               </a-form-item>
-              <div style="display: flex">
-                <a-form-item label="选择版本">
-                  <a-select v-model="selectedMinecraft" :disabled="isLoading || building" allow-search>
-                    <div v-for="(value,key) in minecraft_version" :key="key">
-                      <a-option v-show="showSnapshot || value.type == 'release'" :value="key" :label="key">
-                        <a-tag class="page-tag" style="width: 150px">
-                          {{ key }}
-                        </a-tag>
-                        <a-tag class="page-tag" style="width: 80px" color="red">
-                          资源包：{{ value.resources_version }}
-                        </a-tag>
-                        <a-tag class="page-tag" style="width: 80px" color="blue">
-                          数据包：{{ value.datapack_version }}
-                        </a-tag>
-                      </a-option>
-                    </div>
-                  </a-select>
-                </a-form-item>
-                <a-form-item style="margin-left: 20px" label="显示快照">
-                  <a-checkbox v-model="showSnapshot"/>
-                </a-form-item>
+              <div>
+                <a-row>
+                  <a-col :span="18">
+                    <a-form-item label="选择版本">
+                      <a-select v-model="selectedMinecraft" :disabled="isLoading || building" allow-search>
+                        <div v-for="(value,key) in minecraft_version" :key="key">
+                          <a-option v-show="showSnapshot || value.type == 'release'" :value="key" :label="key">
+                            <a-tag class="page-tag" style="width: 150px">
+                              {{ key }}
+                            </a-tag>
+                            <a-tag class="page-tag" style="width: 80px" color="red">
+                              资源包：{{ value.resources_version }}
+                            </a-tag>
+                            <a-tag class="page-tag" style="width: 80px" color="blue">
+                              数据包：{{ value.datapack_version }}
+                            </a-tag>
+                          </a-option>
+                        </div>
+                      </a-select>
+                    </a-form-item>
+                  </a-col>
+                  <a-col :span="6">
+                    <a-form-item style="margin-left: 20px" label="显示快照">
+                      <a-checkbox v-model="showSnapshot"/>
+                    </a-form-item>
+                  </a-col>
+                </a-row>
               </div>
-              <div style="display: flex">
-                <a-form-item label="选择类型">
-                  <a-select v-model="selectedType" :disabled="isLoading || building">
-                    <a-option value="all">全部</a-option>
-                    <a-option value="resource">资源包</a-option>
-                    <a-option value="data">数据包</a-option>
-                  </a-select>
-                </a-form-item>
-                <a-form-item style="margin-left: 20px">
-                  <template #label>
-                    <a-tooltip>
-                      <template #content>
-                        构建为模组，可在Fabric/Quilt/Forge/Neoforge中加载
+              <div>
+                <a-row>
+                  <a-col :span="18">
+                    <a-form-item label="选择类型">
+                      <a-select v-model="selectedType" :disabled="isLoading || building">
+                        <a-option value="all">全部</a-option>
+                        <a-option value="resource">资源包</a-option>
+                        <a-option value="data">数据包</a-option>
+                      </a-select>
+                    </a-form-item>
+                  </a-col>
+                  <a-col :span="6">
+                    <a-form-item style="margin-left: 20px">
+                      <template #label>
+                        <a-tooltip>
+                          <template #content>
+                            构建为模组，可在Fabric/Quilt/Forge/Neoforge中加载
+                          </template>
+                          <icon-question-circle-fill/>
+                        </a-tooltip>
+                        构建模组
                       </template>
-                      <icon-question-circle-fill/>
-                    </a-tooltip>
-                    构建模组
-                  </template>
-                  <a-checkbox v-model="buildToMod"/>
-                </a-form-item>
+                      <a-checkbox v-model="buildToMod"/>
+                    </a-form-item>
+                  </a-col>
+                </a-row>
               </div>
               <a-button @click="build" :loading="building">构建</a-button>
             </a-form>
