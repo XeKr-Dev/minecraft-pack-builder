@@ -36,6 +36,13 @@ function login() {
   localStorage.setItem("ghp", ghp.value)
   Message.success("Token 设置成功")
 }
+
+const copied = ref(false)
+
+function copyLink() {
+  copied.value = true
+  navigator.clipboard.writeText(window.location.href)
+}
 </script>
 
 <template>
@@ -56,9 +63,30 @@ function login() {
       {{ repo }}
     </template>
     <template #extra>
-      <a-link href="https://github.com/XeKr-Dev/minecraft-pack-builder" target="_blank">
-        <icon-github size="large"/>
-      </a-link>
+      <a-tooltip>
+        <template #content>
+          {{ copied ? "已复制到剪贴板" : "分享页面" }}
+        </template>
+        <a-link>
+          <icon-share-alt size="large" @click="copyLink" @mouseleave="copied=false"/>
+        </a-link>
+      </a-tooltip>
+      <a-tooltip>
+        <template #content>
+          反馈问题
+        </template>
+        <a-link href="https://qm.qq.com/q/63zITa0qfS" target="_blank">
+          <icon-at size="large"/>
+        </a-link>
+      </a-tooltip>
+      <a-tooltip>
+        <template #content>
+          源码仓库
+        </template>
+        <a-link href="https://github.com/XeKr-Dev/minecraft-pack-builder" target="_blank">
+          <icon-github size="large"/>
+        </a-link>
+      </a-tooltip>
       <a-button class="btn" shape="circle" @click="click">
         <icon-moon-fill v-if="dark"/>
         <icon-sun-fill v-else/>

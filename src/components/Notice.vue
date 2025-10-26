@@ -11,7 +11,12 @@
       本页面是一个 <code>纯静态页面</code> ，部署于 <code>GitHub Pages</code>
       <a-divider/>
       本系统基于 <code>GitHub API</code> 实现，由于未登录用户访问限制每小时仅能发起 <code>60</code> 个 请求，请先在
-      <a-link href="https://github.com/settings/tokens/new" target="_blank"><code>GitHub</code></a-link>
+      <a-tooltip>
+        <template #content>
+          前往创建 Personal Access Token
+        </template>
+        <a-link href="https://github.com/settings/tokens/new" target="_blank"><code>GitHub</code></a-link>
+      </a-tooltip>
       上创建一个 <code>Personal Access Token</code> ，并于右上角登录，
       需勾选的权限为： <code>public_repo</code> 与 <code>read:project</code>
       <a-divider/>
@@ -23,9 +28,14 @@
     <a-card style="margin-top: 20px">
       <template #title>
         特别鸣谢
-        <a-link href="https://www.anvilcraft.dev/#/support" target="_blank">
-          <icon-gift size="large"/>
-        </a-link>
+        <a-tooltip>
+          <template #content>
+            赞助我们
+          </template>
+          <a-link href="https://www.anvilcraft.dev/#/support" target="_blank">
+            <icon-gift size="large"/>
+          </a-link>
+        </a-tooltip>
       </template>
       虚位以待...
     </a-card>
