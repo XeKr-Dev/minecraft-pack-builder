@@ -361,10 +361,10 @@ function fileSelectorCancel() {
                             <a-tag class="page-tag" style="width: 150px">
                               {{ key }}
                             </a-tag>
-                            <a-tag class="page-tag" style="width: 80px" color="red">
+                            <a-tag class="page-tag" style="width: 90px" color="red">
                               资源包：{{ value.resources_version }}
                             </a-tag>
-                            <a-tag class="page-tag" style="width: 80px" color="blue">
+                            <a-tag class="page-tag" style="width: 90px" color="blue">
                               数据包：{{ value.datapack_version }}
                             </a-tag>
                           </a-option>
