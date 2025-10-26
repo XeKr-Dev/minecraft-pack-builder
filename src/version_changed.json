@@ -1,4 +1,50 @@
 {
+  "25w43a": {
+    "datapack_version": 91.0,
+    "resources_version": 71.0
+  },
+  "25w42a": {
+    "datapack_version": 90.0,
+    "resources_version": 70.1
+  },
+  "25w41a": {
+    "datapack_version": 89.0,
+    "resources_version": 70.0
+  },
+  "1.21.9-pre2": {
+    "datapack_version": 88.0
+  },
+  "1.21.9-pre1": {
+    "datapack_version": 87.1
+  },
+  "25w37a": {
+    "datapack_version": 87.0,
+    "resources_version": 69.0
+  },
+  "25w36a": {
+    "datapack_version": 86.0,
+    "resources_version": 68.0
+  },
+  "25w35a": {
+    "datapack_version": 85.0,
+    "resources_version": 67.0
+  },
+  "25w34a": {
+    "datapack_version": 84.0,
+    "resources_version": 66.0
+  },
+  "25w33a": {
+    "datapack_version": 83.1,
+    "resources_version": 65.5
+  },
+  "25w32a": {
+    "datapack_version": 83.0,
+    "resources_version": 65.1
+  },
+  "25w31a": {
+    "datapack_version": 82.0,
+    "resources_version": 65.0
+  },
   "1.21.7-rc2": {
     "datapack_version": 81,
     "resources_version": 64
