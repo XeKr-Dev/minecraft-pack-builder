@@ -2,7 +2,7 @@ import mc_version from '@/minecraft_version.json'
 import JSZip from "jszip";
 import type {ConfigJson, MetaJson, VersionModule} from "@/scripts/type";
 import {RecipeFormatter} from "@/scripts/formatter";
-import {utob64} from "@/scripts/util";
+import {b64tou, utob64} from "@/scripts/util";
 import {Version} from "@/scripts/version";
 
 export const mcVersions: {
@@ -275,8 +275,7 @@ authors = "${this.config.author}"
                     {
                         "text": `\u00a7a\u00a7lby \u00a76\u00a7l${this.config.author}`
                     }
-                ],
-                pack_format: packFormat
+                ]
             }
         }
         if (
@@ -285,6 +284,8 @@ authors = "${this.config.author}"
         ) {
             metaJson.pack["min_format"] = [Math.floor(packFormat), parseInt(packFormat.toString().split(".")[1])]
             metaJson.pack["max_format"] = [Math.floor(packFormat), parseInt(packFormat.toString().split(".")[1])]
+        } else {
+            metaJson.pack["pack_format"] = packFormat
         }
         let moduleList: { path: string, weight: number, files?: FileOrTree }[] = []
         for (let key of this.modules.keys()) {
@@ -302,10 +303,30 @@ authors = "${this.config.author}"
         return new Promise<Blob>(resolve => {
             this.getFileTree(`${basePath}/${this.config.main_module}`).then(res => {
                 let pack: FileOrTree = res
-                pack.children?.push({
-                    path: "pack.mcmeta",
-                    content: utob64(JSON.stringify(metaJson, null, 2))
-                })
+                if (pack.children !== null && pack.children !== undefined) {
+                    const mcmetaFile = pack.children.filter(child => child.path === "pack.mcmeta")
+                    if (mcmetaFile.length > 0) {
+                        const originalMetaJson = JSON.parse(b64tou(mcmetaFile[0].content!!))
+                        if (
+                            (this.type === "data" && packFormat >= 82)
+                            || (packFormat >= 65)
+                        ) {
+                            originalMetaJson.pack["min_format"] = [Math.floor(packFormat), parseInt(packFormat.toString().split(".")[1])]
+                            originalMetaJson.pack["max_format"] = [Math.floor(packFormat), parseInt(packFormat.toString().split(".")[1])]
+                            delete originalMetaJson.pack["pack_format"]
+                        } else {
+                            originalMetaJson.pack["pack_format"] = packFormat
+                            delete originalMetaJson.pack["min_format"]
+                            delete originalMetaJson.pack["max_format"]
+                        }
+                        mcmetaFile[0].content = utob64(JSON.stringify(originalMetaJson, null, 2))
+                    } else {
+                        pack.children.push({
+                            path: "pack.mcmeta",
+                            content: utob64(JSON.stringify(metaJson, null, 2))
+                        })
+                    }
+                }
                 const versionModuleMap: {
                     [key: string]: {
                         path: string
