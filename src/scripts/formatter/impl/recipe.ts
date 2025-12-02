@@ -5,7 +5,7 @@ interface RecipeLess24w10a {
         [key: string]: {
             item?: string,
             tag?: string
-        }
+        } | string[]
     }
     ingredients?: {
         item?: string,
@@ -26,7 +26,7 @@ interface RecipeBetween24w10aTo24w33a {
         [key: string]: {
             item?: string,
             tag?: string
-        }
+        } | string[]
     }
     ingredients?: {
         item?: string,
@@ -44,7 +44,7 @@ interface RecipeBetween24w10aTo24w33a {
 
 interface RecipeMore24w33a {
     key?: {
-        [key: string]: string
+        [key: string]: string | string[]
     }
     ingredients?: string[]
     ingredient?: string
@@ -82,7 +82,7 @@ export class RecipeFormatter {
             resultRecipe.key = {}
             for (const keyKey in recipe.key) {
                 const value = recipe.key[keyKey]
-                if (typeof (value) === "string") {
+                if (typeof (value) === "string" || value instanceof Array) {
                     resultRecipe.key[keyKey] = value
                     continue
                 }
@@ -146,13 +146,18 @@ export class RecipeFormatter {
             resultRecipe.key = {}
             for (const convertRecipeKey in convertRecipe.key) {
                 const value = convertRecipe.key[convertRecipeKey]
+                if (value instanceof Array) {
+                    resultRecipe.key[convertRecipeKey] = value
+                    continue
+                }
+                if (typeof (value) !== "string") continue;
                 if (value.startsWith("#")) {
                     resultRecipe.key[convertRecipeKey] = {
-                        tag: convertRecipe.key[convertRecipeKey].substring(1)
+                        tag: value.substring(1)
                     }
                 } else {
                     resultRecipe.key[convertRecipeKey] = {
-                        item: convertRecipe.key[convertRecipeKey]
+                        item: value
                     }
                 }
             }

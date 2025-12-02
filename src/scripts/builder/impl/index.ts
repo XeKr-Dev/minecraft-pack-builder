@@ -314,6 +314,7 @@ authors = "${this.config.author}"
                             originalMetaJson.pack["min_format"] = [Math.floor(packFormat), parseInt(packFormat.toString().split(".")[1])]
                             originalMetaJson.pack["max_format"] = [Math.floor(packFormat), parseInt(packFormat.toString().split(".")[1])]
                             delete originalMetaJson.pack["pack_format"]
+                            delete originalMetaJson.pack["supported_formats"]
                         } else {
                             originalMetaJson.pack["pack_format"] = packFormat
                             delete originalMetaJson.pack["min_format"]
