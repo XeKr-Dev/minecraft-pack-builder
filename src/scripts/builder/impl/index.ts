@@ -282,10 +282,10 @@ authors = "${this.config.author}"
             (this.type === "data" && packFormat >= 82)
             || (packFormat >= 65)
         ) {
-            let floor = Math.floor(packFormat);
-            let celling = parseInt(packFormat.toString().split(".")[0]);
-            metaJson.pack["min_format"] = !!celling ? [floor, celling + 1] : floor
-            metaJson.pack["max_format"] = !!celling ? [floor, celling + 1] : floor
+            let major = Math.floor(packFormat);
+            let minor = parseInt(packFormat.toString().split(".")[1]) || 0;
+            metaJson.pack["min_format"] = !minor ? major : [major, minor]
+            metaJson.pack["max_format"] = !minor ? major : [major, minor]
             delete metaJson.pack["pack_format"]
             delete metaJson.pack["supported_formats"]
         } else {
@@ -317,10 +317,10 @@ authors = "${this.config.author}"
                             (this.type === "data" && packFormat >= 82)
                             || (packFormat >= 65)
                         ) {
-                            let floor = Math.floor(packFormat);
-                            let celling = parseInt(packFormat.toString().split(".")[0]);
-                            originalMetaJson.pack["min_format"] = !!celling ? [floor, celling + 1] : floor
-                            originalMetaJson.pack["max_format"] = !!celling ? [floor, celling + 1] : floor
+                            let major = Math.floor(packFormat);
+                            let minor = parseInt(packFormat.toString().split(".")[1]) || 0;
+                            originalMetaJson.pack["min_format"] = !minor ? major : [major, minor]
+                            originalMetaJson.pack["max_format"] = !minor ? major : [major, minor]
                             delete originalMetaJson.pack["pack_format"]
                             delete originalMetaJson.pack["supported_formats"]
                         } else {
