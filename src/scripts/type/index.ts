@@ -21,6 +21,7 @@ export interface ConfigJson {
     file_mode?: boolean
     type?: "resource" | "data"
     suggested_version?: string
+    version_reverse?: boolean,
     version_modules?: VersionModules,
 }
 

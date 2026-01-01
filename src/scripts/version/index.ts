@@ -35,11 +35,11 @@ export class Version {
         return new Version(parseInt(parts[0] || '0'), parseInt(parts[1] || '0'), parseInt(parts[2] || '0'));
     }
 
-    public static compareMC(mcv1: string, mcv2: string): number {
+    public static compareMC(mcv1: string, mcv2: string, reverse: boolean = false): number {
         const index1 = mcVersionKeys.indexOf(mcv2)
         const index2 = mcVersionKeys.indexOf(mcv1)
         if (index1 === -1 || index2 === -1) throw new Error(`Unknown Minecraft version: ${mcv1} or ${mcv2}`)
-        return index1 - index2
+        return (index1 - index2) * (reverse ? -1 : 1)
     }
 }
 

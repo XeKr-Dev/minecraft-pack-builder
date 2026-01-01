@@ -349,8 +349,8 @@ authors = "${this.config.author}"
                         const versionModule: VersionModule = this.config.version_modules[versionModuleKey]
                         const moduleMCVersion = mcVersions[versionModule.version];
                         if (!moduleMCVersion) continue
-                        if (Version.compareMC(this.version, versionModule.version) < 0) continue
-                        if (versionModule.strict && Version.compareMC(this.version, versionModule.version) !== 0) continue
+                        if (Version.compareMC(this.version, versionModule.version, !!this.config.version_reverse) < 0) continue
+                        if (versionModule.strict && Version.compareMC(this.version, versionModule.version, !!this.config.version_reverse) !== 0) continue
                         const targetKey = versionModule.target || this.config.main_module
                         const target = versionModuleMap[targetKey]
                         if (target && Version.compareMC(target.version, versionModule.version) >= 0) continue
