@@ -1,4 +1,69 @@
 {
+  "26.1-snapshot-1": {
+    "type": "snapshot",
+    "datapack_version": 95,
+    "resources_version": 76
+  },
+  "1.21.11": {
+    "type": "release",
+    "datapack_version": 94.1,
+    "resources_version": 75
+  },
+  "1.21.11-rc3": {
+    "type": "snapshot",
+    "datapack_version": 94.1,
+    "resources_version": 75
+  },
+  "1.21.11-rc2": {
+    "type": "snapshot",
+    "datapack_version": 94.1,
+    "resources_version": 75
+  },
+  "1.21.11-rc1": {
+    "type": "snapshot",
+    "datapack_version": 94.1,
+    "resources_version": 75
+  },
+  "1.21.11-pre5": {
+    "type": "snapshot",
+    "datapack_version": 94.1,
+    "resources_version": 75
+  },
+  "1.21.11-pre4": {
+    "type": "snapshot",
+    "datapack_version": 94.1,
+    "resources_version": 75
+  },
+  "1.21.11-pre3": {
+    "type": "snapshot",
+    "datapack_version": 94,
+    "resources_version": 75
+  },
+  "1.21.11-pre2": {
+    "type": "snapshot",
+    "datapack_version": 94,
+    "resources_version": 75
+  },
+  "1.21.11-pre1": {
+    "type": "snapshot",
+    "datapack_version": 94,
+    "resources_version": 75
+  },
+  "25w46a": {
+    "type": "snapshot",
+    "datapack_version": 93.1,
+    "resources_version": 74
+  },
+  "25w45a": {
+    "type": "snapshot",
+    "datapack_version": 93,
+    "resources_version": 73
+  },
+  "25w44a": {
+    "type": "snapshot",
+    "datapack_version": 92,
+    "resources_version": 72
+  },
   "25w43a": {
     "type": "snapshot",
     "datapack_version": 91,

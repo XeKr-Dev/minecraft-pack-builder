@@ -1,4 +1,27 @@
 {
+  "26.1-snapshot-1": {
+    "datapack_version": 95.0,
+    "resources_version": 76.0
+  },
+  "1.21.11-pre4": {
+    "datapack_version": 94.1
+  },
+  "1.21.11-pre1": {
+    "datapack_version": 94.0,
+    "resources_version": 75.0
+  },
+  "25w46a": {
+    "datapack_version": 93.1,
+    "resources_version": 74.0
+  },
+  "25w45a": {
+    "datapack_version": 93.0,
+    "resources_version": 73.0
+  },
+  "25w44a": {
+    "datapack_version": 92.0,
+    "resources_version": 72.0
+  },
   "25w43a": {
     "datapack_version": 91.0,
     "resources_version": 71.0
