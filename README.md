@@ -95,11 +95,11 @@
 
 #### `VersionModule`
 
-| 字段      | 类型      | 描述                 |
-|---------|---------|--------------------|
-| version | string  | 匹配的 `Minecraft` 版本 |
-| strict  | boolean | 是否严格匹配版本           |
-| target  | string? | 要覆盖的模块，默认为主模块      |
+| 字段      | 类型       | 描述                 |
+|---------|----------|--------------------|
+| version | string   | 匹配的 `Minecraft` 版本 |
+| strict  | boolean? | 是否严格匹配版本           |
+| target  | string?  | 要覆盖的模块，默认为主模块      |
 
 ### `module.config.json`
 
