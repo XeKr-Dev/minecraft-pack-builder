@@ -312,9 +312,9 @@ authors = "${this.config.author}"
                             || (packFormat >= 65)
                         ) {
                             let floor = Math.floor(packFormat);
-                            let celling = parseInt(packFormat.toString().split(".")[1]);
-                            originalMetaJson.pack["min_format"] = !!celling ? [floor, celling] : floor
-                            originalMetaJson.pack["max_format"] = !!celling ? [floor, celling] : floor
+                            let celling = parseInt(packFormat.toString().split(".")[0]);
+                            originalMetaJson.pack["min_format"] = !!celling ? [floor, celling + 1] : floor
+                            originalMetaJson.pack["max_format"] = !!celling ? [floor, celling + 1] : floor
                             delete originalMetaJson.pack["pack_format"]
                             delete originalMetaJson.pack["supported_formats"]
                         } else {
