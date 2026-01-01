@@ -2,7 +2,17 @@ name: Deploy vue.js site to Pages
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+    paths:
+      - src/**
+      - public/**
+      - index.html
+      - package.json
+      - tsconfig.app.json
+      - tsconfig.json
+      - tsconfig.node.json
+      - vite.config.ts
 
 permissions:
   contents: read
