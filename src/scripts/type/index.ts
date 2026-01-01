@@ -46,7 +46,8 @@ export interface MetaJson {
             text: string
         }[],
         pack_format?: number
-        min_format?: [number, number]
-        max_format?: [number, number]
+        min_format?: [number, number] | number
+        max_format?: [number, number] | number
+        supported_formats?: [number, number] | number | { min_inclusive: number, max_inclusive: number }
     }
 }

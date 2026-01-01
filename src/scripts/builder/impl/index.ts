@@ -282,10 +282,16 @@ authors = "${this.config.author}"
             (this.type === "data" && packFormat >= 82)
             || (packFormat >= 65)
         ) {
-            metaJson.pack["min_format"] = [Math.floor(packFormat), parseInt(packFormat.toString().split(".")[1])]
-            metaJson.pack["max_format"] = [Math.floor(packFormat), parseInt(packFormat.toString().split(".")[1])]
+            let floor = Math.floor(packFormat);
+            let celling = parseInt(packFormat.toString().split(".")[0]);
+            metaJson.pack["min_format"] = !!celling ? [floor, celling + 1] : floor
+            metaJson.pack["max_format"] = !!celling ? [floor, celling + 1] : floor
+            delete metaJson.pack["pack_format"]
+            delete metaJson.pack["supported_formats"]
         } else {
             metaJson.pack["pack_format"] = packFormat
+            delete metaJson.pack["min_format"]
+            delete metaJson.pack["max_format"]
         }
         let moduleList: { path: string, weight: number, files?: FileOrTree }[] = []
         for (let key of this.modules.keys()) {
