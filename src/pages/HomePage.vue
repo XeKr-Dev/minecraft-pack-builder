@@ -54,6 +54,10 @@ const progress = ref(false)
 const openFileSelector = ref(false)
 const files = ref<File[]>([])
 
+function moduleKeys() {
+  return Array.from(modules.value.keys()).sort((a, b) => a.localeCompare(b))
+}
+
 function loadRepo() {
   try {
     progress.value = false
@@ -351,7 +355,7 @@ function fileSelectorCancel() {
             <a-form :model="{}" :auto-label-width="true">
               <a-form-item label="选择模块">
                 <a-select v-model="selectedModules" multiple @change="changeModules" :disabled="isLoading || building">
-                  <div v-for="key in modules.keys()" :key="key">
+                  <div v-for="key in moduleKeys()" :key="key">
                     <a-tooltip v-if="!!modules.get(key)?.description" :content="modules.get(key)?.description">
                       <a-option :value="key" :disabled="checkModuleDisabled(key)">
                         {{ modules.get(key)?.module_name }}
