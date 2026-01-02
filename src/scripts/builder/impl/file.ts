@@ -19,7 +19,7 @@ export class FileBuilder extends AbstractBuilder {
         this.files = file;
     }
 
-    public getFileTree(path: string): Promise<FileOrTree> {
+    public getFileTree(path: string, proxy: boolean = false): Promise<FileOrTree> {
         if (path.startsWith("./")) path = path.substring(2);
         let files = this.files.file(path)
         const curPath = this.processPath(path)
@@ -47,7 +47,7 @@ export class FileBuilder extends AbstractBuilder {
                         if (!file || file.dir) {
                             const dirFile1 = dirFile.folder(fileKeySub)
                             if (!dirFile1) continue;
-                            const promise = this.getFileTree(filesKey).then(files => fileTree.children?.push(files))
+                            const promise = this.getFileTree(filesKey, proxy).then(files => fileTree.children?.push(files))
                             promises.push(promise)
                             continue
                         }

@@ -8,17 +8,17 @@ export class Request {
         timeout: 15000
     })
 
-    private static getHeaders(headers: any = {}) {
+    private static getHeaders(headers: any = {}, proxy: boolean = false) {
         const ghp = localStorage.getItem('ghp')
-        if (!ghp) return headers
+        if (!ghp || !proxy) return headers
         return {
             ...headers,
             Authorization: `Bearer ${ghp}`
         }
     }
 
-    public static async get(url: string, headers: any = {}): Promise<any> {
-        headers = Request.getHeaders(headers)
+    public static async get(url: string, headers: any = {}, proxy: boolean = false): Promise<any> {
+        headers = Request.getHeaders(headers, proxy)
         return new Promise<any>((resolve, reject) => {
             Request.INSTANCE
                 .get(url, {headers})
@@ -36,9 +36,10 @@ export class Request {
     public static async post(
         url: string,
         data: any = {},
-        headers: any = {}
+        headers: any = {},
+        proxy: boolean = false
     ): Promise<any> {
-        headers = Request.getHeaders(headers)
+        headers = Request.getHeaders(headers, proxy)
         return new Promise<any>((resolve, reject) => {
             Request.INSTANCE
                 .post(url, data, {headers})
@@ -56,9 +57,10 @@ export class Request {
     public static async put(
         url: string,
         data: any = {},
-        headers: any = {}
+        headers: any = {},
+        proxy: boolean = false
     ): Promise<any> {
-        headers = Request.getHeaders(headers)
+        headers = Request.getHeaders(headers, proxy)
         return new Promise<any>((resolve, reject) => {
             Request.INSTANCE
                 .put(url, data, {headers})
@@ -73,8 +75,8 @@ export class Request {
         })
     }
 
-    public static async delete(url: string, headers: any = {}): Promise<any> {
-        headers = Request.getHeaders(headers)
+    public static async delete(url: string, headers: any = {}, proxy: boolean = false): Promise<any> {
+        headers = Request.getHeaders(headers, proxy)
         return new Promise<any>((resolve, reject) => {
             Request.INSTANCE
                 .delete(url, {headers})

@@ -5,9 +5,10 @@ import {type FileOrTree, type RepoContents, AbstractBuilder} from "@/scripts/bui
 export class OnlineBuilder extends AbstractBuilder {
     public getFileTree(
         path: string,
+        proxy: boolean = false
     ): Promise<FileOrTree> {
         return new Promise<FileOrTree>(resolve => {
-            GithubAPI.getRepoContents(this.repo, path).then(res => {
+            GithubAPI.getRepoContents(this.repo, path, proxy).then(res => {
                 const data = res as RepoContents
                 let curPath = this.processPath(path)
                 if (!Array.isArray(data)) {
@@ -30,7 +31,7 @@ export class OnlineBuilder extends AbstractBuilder {
                     if (this.type === "data" && filePath.startsWith(`assets/`)) {
                         continue
                     }
-                    const promise = this.getFileTree(datum.path).then(file => {
+                    const promise = this.getFileTree(datum.path, proxy).then(file => {
                         tree.children?.push(file)
                     })
                     promises.push(promise)

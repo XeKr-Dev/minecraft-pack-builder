@@ -38,7 +38,7 @@ export interface IBuilder {
 
     mergeFileOrTree(file1: FileOrTree, file2: FileOrTree): FileOrTree
 
-    getFileTree(path: string): Promise<FileOrTree>
+    getFileTree(path: string, proxy?: boolean): Promise<FileOrTree>
 
     fileToZip(zip: JSZip, b64: string, path: string): void
 
@@ -48,7 +48,7 @@ export interface IBuilder {
 
     buildModZip(zip: JSZip): void
 
-    build(): Promise<Blob>
+    build(proxy?: boolean): Promise<Blob>
 }
 
 export abstract class AbstractBuilder implements IBuilder {
@@ -136,7 +136,7 @@ export abstract class AbstractBuilder implements IBuilder {
         return content
     }
 
-    public abstract getFileTree(path: string): Promise<FileOrTree>;
+    public abstract getFileTree(path: string, proxy?: boolean): Promise<FileOrTree>;
 
     public fileToZip(zip: JSZip, b64: string, path: string) {
         const cleanBase64 = b64.replace(/\s+/g, '');
@@ -262,7 +262,7 @@ authors = "${this.config.author}"
         this.fileToZip(zip, utob64(JSON.stringify(quiltModJson, null, 4)), "quilt.mod.json")
     }
 
-    public build(): Promise<Blob> {
+    public build(proxy: boolean = false): Promise<Blob> {
         const minecraftVersion = mcVersions[this.version]
         const basePath = this.getBasePath()
         const packFormat = this.type === "data" ? minecraftVersion.datapack_version : minecraftVersion.resources_version;
@@ -302,12 +302,12 @@ authors = "${this.config.author}"
         }
         const promises: Promise<any>[] = []
         for (let module of moduleList) {
-            const promise = this.getFileTree(module.path).then(tree => module.files = tree)
+            const promise = this.getFileTree(module.path, proxy).then(tree => module.files = tree)
             promises.push(promise)
         }
         moduleList = moduleList.sort((a, b) => a.weight - b.weight)
         return new Promise<Blob>(resolve => {
-            this.getFileTree(`${basePath}/${this.config.main_module}`).then(res => {
+            this.getFileTree(`${basePath}/${this.config.main_module}`, proxy).then(res => {
                 let pack: FileOrTree = res
                 if (pack.children !== null && pack.children !== undefined) {
                     const mcmetaFile = pack.children.filter(child => child.path === "pack.mcmeta")
@@ -370,12 +370,12 @@ authors = "${this.config.author}"
                     }
                     for (const versionModuleKey in versionModuleMap) {
                         const versionModule = versionModuleMap[versionModuleKey]
-                        const promise = this.getFileTree(versionModule.path).then(res => versionModule.files = res)
+                        const promise = this.getFileTree(versionModule.path, proxy).then(res => versionModule.files = res)
                         promises.push(promise)
                     }
                 }
                 if (this.config.icon) {
-                    const promise = this.getFileTree(this.config.icon).then(icon => {
+                    const promise = this.getFileTree(this.config.icon, proxy).then(icon => {
                         icon.path = "pack.png"
                         pack.children?.push(icon)
                     })

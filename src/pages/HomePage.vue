@@ -46,6 +46,7 @@ const selectedModules: Ref<string[]> = ref([])
 const selectedSet: Ref<string | undefined> = ref(undefined)
 const selectedMinecraft: Ref<string> = ref("1.21.7")
 const showSnapshot = ref(false)
+const useProxy = ref(false)
 const selectedType: Ref<'all' | 'resource' | 'data'> = ref("all")
 const buildToMod = ref(false)
 const building = ref(false)
@@ -83,12 +84,12 @@ function loadRepo() {
     const urlPrefix = window.location.href.split('/#/')[0]
     history.pushState(null, '', `${urlPrefix}#/${repo.value}`)
     const promises: Promise<any>[] = []
-    GithubAPI.getRepoContents(repo.value, "config.json").then(configData => {
+    GithubAPI.getRepoContents(repo.value, "config.json", useProxy.value).then(configData => {
       config.value = JSON.parse(b64tou(configData.content)) as ConfigJson
       if (config.value.suggested_version) selectedMinecraft.value = config.value.suggested_version
       if (config.value.type) selectedType.value = config.value.type
       if (config.value.icon) {
-        GithubAPI.getRepoContents(repo.value, config.value.icon).then(iconData => {
+        GithubAPI.getRepoContents(repo.value, config.value.icon, useProxy.value).then(iconData => {
           imageMagnify(`${BASE_64_PNG_PREFIX}${iconData.content}`).then(b64 => {
             icon.value = b64
           })
@@ -102,7 +103,7 @@ function loadRepo() {
         Message.success("加载成功")
       })
     })
-    GithubAPI.getRepoReadme(repo.value).then(readmeData => {
+    GithubAPI.getRepoReadme(repo.value, useProxy.value).then(readmeData => {
       readme.value = b64tou(readmeData.content)
     })
   } catch (e: any) {
@@ -123,7 +124,7 @@ function loadRepo() {
 function loadModules(): Promise<void> {
   const basePath = Builder.getBasePath(config.value)
   return new Promise(resolve => {
-    GithubAPI.getRepoContents(repo.value, basePath).then(data => {
+    GithubAPI.getRepoContents(repo.value, basePath, useProxy.value).then(data => {
       const promises: Promise<any>[] = []
       for (const path of data) {
         let cont = false;
@@ -140,7 +141,7 @@ function loadModules(): Promise<void> {
         if (path.name == config.value.main_module) {
           continue
         }
-        const promise = GithubAPI.getRepoContents(repo.value, path.path + "/module.config.json").then(data => {
+        const promise = GithubAPI.getRepoContents(repo.value, path.path + "/module.config.json", useProxy.value).then(data => {
           modules.value.set(path.path as string, JSON.parse(b64tou(data.content)) as ModuleConfigJson)
         })
         promises.push(promise)
@@ -153,17 +154,17 @@ function loadModules(): Promise<void> {
 async function loadSets(): Promise<void> {
   if (!config.value.sets_path) return;
   const setsPath = config.value.sets_path
-  const data = await GithubAPI.getRepoContents(repo.value, setsPath)
+  const data = await GithubAPI.getRepoContents(repo.value, setsPath, useProxy.value)
   for (const path of data) {
-    const setConfigData = await GithubAPI.getRepoContents(repo.value, path.path)
+    const setConfigData = await GithubAPI.getRepoContents(repo.value, path.path, useProxy.value)
     const configJson = JSON.parse(b64tou(setConfigData.content)) as SetConfigJson
     sets.value.set(configJson.set_name, configJson)
   }
   return new Promise(resolve => {
-    GithubAPI.getRepoContents(repo.value, setsPath).then(data => {
+    GithubAPI.getRepoContents(repo.value, setsPath, useProxy.value).then(data => {
       const promises: Promise<any>[] = []
       for (const path of data) {
-        const promise = GithubAPI.getRepoContents(repo.value, path.path).then(setConfigData => {
+        const promise = GithubAPI.getRepoContents(repo.value, path.path, useProxy.value).then(setConfigData => {
           const configJson = JSON.parse(b64tou(setConfigData.content)) as SetConfigJson
           sets.value.set(configJson.set_name, configJson)
         })
@@ -243,7 +244,7 @@ function build() {
     Message.error("请选择构建类型")
     return
   }
-  if (!config.value.file_mode) {
+  if (!config.value.file_mode && !useProxy.value) {
     const mods: Map<string, number> = new Map()
     for (const key of selectedModules.value) {
       const value = modules.value.get(key)
@@ -259,7 +260,8 @@ function build() {
         selectedMinecraft.value,
         selectedType.value,
         buildToMod.value,
-        "online"
+        "online",
+        useProxy.value
     ).then((blob) => {
       building.value = false
       Message.success("构建成功")
@@ -272,7 +274,9 @@ function build() {
     return;
   }
   openFileSelector.value = true
-  GithubAPI.getRepoZip(repo.value)
+  GithubAPI.getRepoInfo(repo.value, useProxy.value).then(repoInfo => {
+    GithubAPI.getRepoZip(repo.value, repoInfo["default_branch"], useProxy.value)
+  })
 }
 
 async function fileSelectorOK() {
@@ -304,6 +308,7 @@ async function fileSelectorOK() {
       selectedType.value,
       buildToMod.value,
       "file",
+      useProxy.value,
       neoZip
   ).then((blob) => {
     files.value = []
@@ -337,6 +342,8 @@ function fileSelectorCancel() {
         <a-form-item label="仓库地址">
           <a-input v-model="repoUrl"/>
           <a-button class="btn" @click="loadRepo" :loading="isLoading" :disabled="building">加载</a-button>
+          <a-checkbox v-model="useProxy"/>
+          <div style="white-space: nowrap; margin-left: 8px">使用代理</div>
         </a-form-item>
       </a-form>
     </div>

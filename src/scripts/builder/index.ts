@@ -21,11 +21,12 @@ export class Builder {
         type: "all" | "resource" | "data" = "all",
         mod: boolean = false,
         builder: "online" | "file",
+        proxy: boolean = false,
         extra: JSZip | undefined = undefined
     ): Promise<Blob> {
         if (builder === "online") {
-            return new OnlineBuilder(repo, config, modules, version, type, mod).build();
+            return new OnlineBuilder(repo, config, modules, version, type, mod).build(proxy);
         }
-        return new FileBuilder(repo, config, modules, version, type, mod, extra!!).build();
+        return new FileBuilder(repo, config, modules, version, type, mod, extra!!).build(proxy);
     }
 }
