@@ -1,12 +1,15 @@
 name: Deploy vue.js site to Pages
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
     paths:
       - src/**
       - public/**
+      - .env.development
+      - .env.production
       - index.html
       - package.json
       - tsconfig.app.json
