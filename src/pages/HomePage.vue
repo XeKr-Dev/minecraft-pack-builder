@@ -209,10 +209,10 @@ async function loadSets(): Promise<void> {
         promises.push(promise)
       }
       Promise.all(promises).then(() => resolve())
+    }).catch(e => {
+      console.error(e)
+      resetStatus()
     })
-  }).catch(e => {
-    console.error(e)
-    resetStatus()
   })
 }
 
