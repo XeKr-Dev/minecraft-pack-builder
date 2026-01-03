@@ -62,7 +62,7 @@ const status: Status = reactive({
   loaded: false,
   repo: "",
   readme: "",
-  config: {} as ConfigJson,
+  config: undefined,
   modules: new Map(),
   selectedModules: [],
   sets: new Map(),
@@ -78,21 +78,34 @@ const status: Status = reactive({
   files: [],
 })
 
+function resetStatus() {
+  status.loading = false
+  status.loaded = false
+  status.repo = ""
+  status.readme = ""
+  status.config = undefined
+  status.modules = new Map()
+  status.selectedModules = []
+  status.sets = new Map()
+  status.selectedSet = undefined
+  status.selectedMinecraft = "1.21.11"
+  status.showSnapshot = false
+  status.type = "all"
+  status.buildToMod = false
+  status.building = false
+  status.icon = ""
+  status.progress = false
+  status.openFileSelector = false
+  status.files = []
+}
+
 function moduleKeys() {
   return Array.from(status.modules.keys()).sort((a, b) => a.localeCompare(b))
 }
 
 function loadRepo() {
   try {
-    status.progress = false
-    status.loaded = false
-    status.loading = true
-    status.config = {} as ConfigJson
-    status.modules = new Map()
-    status.sets = new Map()
-    status.selectedModules = []
-    status.selectedSet = undefined
-    status.readme = ""
+    resetStatus()
     const urlSplit = repoUrl.value.split(/(?<!\/)\/(?!\/)/)
     if (
         urlSplit[1] === undefined
@@ -125,22 +138,21 @@ function loadRepo() {
         status.loading = false
         Message.success("加载成功")
       })
+    }).catch(e => {
+      Message.error("无法加载配置文件")
+      console.error(e)
+      resetStatus()
     })
     GithubAPI.getRepoReadme(status.repo, useProxy.value).then(readmeData => {
       status.readme = b64tou(readmeData.content)
+    }).catch(e => {
+      Message.error("无法加载 README.md")
+      console.error(e)
+      resetStatus()
     })
   } catch (e: any) {
     console.error(e)
-    status.progress = false
-    status.loaded = false
-    status.loading = false
-    status.config = undefined
-    status.modules = new Map()
-    status.sets = new Map()
-    status.selectedModules = []
-    status.selectedSet = undefined
-    status.repo = ""
-    status.readme = ""
+    resetStatus()
   }
 }
 
@@ -170,6 +182,9 @@ function loadModules(): Promise<void> {
         promises.push(promise)
       }
       Promise.all(promises).then(() => resolve())
+    }).catch(e => {
+      console.error(e)
+      resetStatus()
     })
   })
 }
@@ -195,6 +210,9 @@ async function loadSets(): Promise<void> {
       }
       Promise.all(promises).then(() => resolve())
     })
+  }).catch(e => {
+    console.error(e)
+    resetStatus()
   })
 }
 
@@ -299,6 +317,9 @@ function build() {
   status.openFileSelector = true
   GithubAPI.getRepoInfo(status.repo, useProxy.value).then(repoInfo => {
     GithubAPI.getRepoZip(status.repo, repoInfo["default_branch"], useProxy.value)
+  }).catch(e => {
+    console.error(e)
+    resetStatus()
   })
 }
 
