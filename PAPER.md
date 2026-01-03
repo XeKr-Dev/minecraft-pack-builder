@@ -5,10 +5,11 @@
 ## 摘要
 
 > 本项目是一个基于Web的模块化Minecraft资源包/数据包构建工具，通过创新性的纯前端架构解决了传统资源包开发中的模块复用、版本兼容和分发效率问题。
-> 系统采用Vue3 + TypeScript + Vite技术栈，利用GitHub API实时获取仓库资源，通过智能版本适配引擎（PathFormatter和RecipeFormatter）自动转换不同Minecraft版本的资源格式，
-> 支持用户自定义模块组合和预设合集选择。核心构建器采用抽象工厂模式（AbstractBuilder）和权重排序算法解决模块冲突问题，支持模块绑定、互斥检测和递归依赖管理，
-> 并可将资源包打包为Fabric/Quilt/Forge/NeoForge模组格式。项目采用双构建器模式（OnlineBuilder和FileBuilder）分别支持在线和离线构建场景，
-> 提供了标准化项目模板和配置文件格式，显著降低了资源包开发门槛，促进了Minecraft社区的协作与创新。
+> 系统采用Vue3 + TypeScript + Vite技术栈，利用GitHub API实时获取仓库资源，通过智能版本适配引擎（PathFormatter和RecipeFormatter）
+> 自动转换不同Minecraft版本的资源格式， 支持用户自定义模块组合和预设合集选择。核心构建器采用抽象工厂模式（AbstractBuilder）
+> 和权重排序算法解决模块冲突问题，支持模块绑定、互斥检测和递归依赖管理，并可将资源包打包为Fabric/Quilt/Forge/NeoForge模组格式。
+> 项目采用双构建器模式（OnlineBuilder和FileBuilder）分别支持在线和离线构建场景，提供了标准化项目模板和配置文件格式，
+> 显著降低了资源包开发门槛，促进了Minecraft社区的协作与创新。
 
 ## 关键词
 
@@ -32,7 +33,8 @@
 ## Key words:
 
 > Minecraft Resource Pack Building, Minecraft Data Pack Building, Modular Architecture, Version Adaptation System,
-> Front-end Build Engine, GitHub API Integration, JSZip Packaging, Abstract Factory Pattern, Weight-based Module Merging, Community Collaboration
+> Front-end Build Engine, GitHub API Integration, JSZip Packaging, Abstract Factory Pattern,
+> Weight-based Module Merging, Community Collaboration
 
 ## 一、引言
 
@@ -69,7 +71,7 @@ graph TD
 
 ### 2. 项目结构
 
-项目采用Vue3作为前端框架,使用TypeScript进行类型安全开发,Vite作为构建工具,主要代码位于`src`目录下:
+项目采用Vue3作为前端框架，使用TypeScript进行类型安全开发，Vite作为构建工具，主要代码位于`src`目录下:
 
 **核心目录结构:**
 
@@ -80,20 +82,20 @@ graph TD
     - `Notice.vue`:通知组件
     - `PageHeader.vue`:页面头部组件
 - `src/pages`:页面层
-    - `HomePage.vue`:主页面,实现核心用户交互逻辑(555行)
+    - `HomePage.vue`:主页面，实现核心用户交互逻辑(555行)
 - `src/scripts`:核心业务逻辑层
     - `builder`:构建器模块(抽象工厂模式实现)
-        - `impl/index.ts`:AbstractBuilder抽象基类(407行,定义核心构建流程)
+        - `impl/index.ts`:AbstractBuilder抽象基类(407行，定义核心构建流程)
         - `impl/online.ts`:OnlineBuilder在线构建器(通过GitHub API递归获取文件树)
         - `impl/file.ts`:FileBuilder本地构建器(从用户上传的ZIP文件构建)
         - `index.ts`:Builder工厂类(统一构建入口)
     - `formatter`:格式转换器模块
         - `impl/path.ts`:PathFormatter路径转换器(处理data/assets目录结构变化)
-        - `impl/recipe.ts`:RecipeFormatter配方转换器(234行,处理三代配方格式演进)
+        - `impl/recipe.ts`:RecipeFormatter配方转换器(234行，处理三代配方格式演进)
         - `index.ts`:导出统一接口
-    - `github/index.ts`:GithubAPI封装(支持代理切换,含4个代理池)
+    - `github/index.ts`:GithubAPI封装(支持代理切换，含4个代理池)
     - `message/index.ts`:消息提示系统(基于Arco Design)
-    - `request/index.ts`:HTTP请求封装(基于Axios,支持GitHub PAT认证)
+    - `request/index.ts`:HTTP请求封装(基于Axios，支持GitHub PAT认证)
     - `type/index.ts`:TypeScript类型定义(ConfigJson、ModuleConfigJson等核心接口)
     - `util/index.ts`:工具函数(Base64编解码、图片放大等)
     - `version/index.ts`:Minecraft版本比较工具
@@ -108,9 +110,9 @@ graph TD
 
 - **核心框架**:Vue3(v3.5.17) + TypeScript(v5.8.3) + Vite(v7.0.0)
 - **UI组件库**:Arco Design(v2.57.0)
-- **HTTP客户端**:Axios(v1.10.0,支持GitHub API认证)
-- **ZIP处理**:JSZip(v3.10.1,客户端压缩打包)
-- **Markdown渲染**:Marked(v16.0.0) + DOMPurify(v3.2.6,XSS防护)
+- **HTTP客户端**:Axios(v1.10.0，支持GitHub API认证)
+- **ZIP处理**:JSZip(v3.10.1，客户端压缩打包)
+- **Markdown渲染**:Marked(v16.0.0) + DOMPurify(v3.2.6，XSS防护)
 - **文件下载**:FileSaver(v2.0.5)
 - **样式预处理**:Sass(v1.89.2)
 - **代码规范**:ESLint(v9.30.0) + Prettier(v3.6.2)
@@ -131,9 +133,9 @@ graph TD
 
 **智能依赖处理:**
 
-- **模块互斥**(`breaks`):双向冲突检测,自动禁用不兼容选项
-- **模块绑定**(`bindings`):递归依赖管理,自动选中传递依赖
-- **权重排序**:模块按`weight`值从小到大排序,高权重模块覆盖低权重模块的同名文件
+- **模块互斥**(`breaks`):双向冲突检测，自动禁用不兼容选项
+- **模块绑定**(`bindings`):递归依赖管理，自动选中传递依赖
+- **权重排序**:模块按`weight`值从小到大排序，高权重模块覆盖低权重模块的同名文件
 
 **核心算法实现**(HomePage.vue第246-285行):
 
@@ -187,7 +189,7 @@ function selectWithBindings(key: string) {
 
 #### (3) 构建流程
 
-构建流程由`AbstractBuilder.build`方法实现,采用异步Promise链式处理:
+构建流程由`AbstractBuilder.build`方法实现，采用异步Promise链式处理:
 
 **1. 版本信息确定**
 
@@ -224,7 +226,7 @@ this.getFileTree(`${basePath}/${this.config.main_module}`).then(res => {
 // noinspection JSAnnotator
 
 if (this.config.version_modules) {
-    // 版本比较,选择最合适的版本模块
+    // 版本比较，选择最合适的版本模块
     if (Version.compareMC(this.version, versionModule.version) < 0) continue
     if (strict && Version.compareMC(...) !== 0) continue
     // 版本模块可覆盖主模块或其他模块
@@ -257,13 +259,13 @@ class AbstractBuilder {
             // 查找file1中是否存在同名节点
             for (let child1 of file.children) {
                 if (child1.path == child.path) {
-                    // 情况1:文件节点,直接覆盖内容
+                    // 情况1:文件节点，直接覆盖内容
                     if (child1.content !== undefined && child.content !== undefined) {
                         child1.content = child.content
                         contain = true
                         break
                     }
-                    // 情况2:目录节点,递归合并子树
+                    // 情况2:目录节点，递归合并子树
                     if (child1.children !== undefined && child.children !== undefined) {
                         const merged = this.mergeFileOrTree(child, child1)
                         child1.children = merged.children
@@ -272,7 +274,7 @@ class AbstractBuilder {
                     }
                 }
             }
-            // 情况3:file1中不存在该节点,直接添加
+            // 情况3:file1中不存在该节点，直接添加
             if (contain) continue
             file.children.push(child)
         }
@@ -371,16 +373,16 @@ loaderVersion = "[1,)"
 
 系统采用**抽象工厂模式**实现双构建器:
 
-- **AbstractBuilder**(抽象基类,407行):
+- **AbstractBuilder**(抽象基类，407行):
     - 定义核心构建流程:`build()`方法(265-405行)
     - 实现文件树合并:`mergeFileOrTree()`(95-124行)
     - 实现内容预处理:`preprocessContent()`(126-137行)
     - 实现模组打包:`buildModZip()`(185-263行)
-- **OnlineBuilder**(在线构建器,45行):
+- **OnlineBuilder**(在线构建器，45行):
     - 继承AbstractBuilder
     - 通过`GithubAPI.getRepoContents()`递归获取文件树(第6-44行)
     - 支持GitHub代理模式(从4个代理池随机选择)
-- **FileBuilder**(本地构建器,80行):
+- **FileBuilder**(本地构建器，80行):
     - 继承AbstractBuilder
     - 从用户上传的ZIP文件构建(基于JSZip)
     - 支持私有仓库和离线场景
@@ -401,7 +403,7 @@ loaderVersion = "[1,)"
 
 **PathFormatter - 路径格式转换器**
 
-不同Minecraft版本对数据包路径命名有变化,如1.21(pack_format 45)后:
+不同Minecraft版本对数据包路径命名有变化，如1.21(pack_format 45)后:
 
 ```typescript
 PathFormatter.dataPathMap.set(45, [
@@ -495,7 +497,7 @@ class RecipeFormatter {
 
 #### (5) GitHub API集成
 
-**API封装**(`src/scripts/github/index.ts`,31行):
+**API封装**(`src/scripts/github/index.ts`，31行):
 
 ```typescript
 // noinspection JSAnnotator
@@ -529,7 +531,7 @@ export class GithubAPI {
 - 未认证用户:60请求/小时(GitHub API限制)
 - Personal Access Token:5000请求/小时
 - 所需权限:`public_repo`、`read:project`
-- 存储方式:localStorage(纯前端,无后端,保护隐私)
+- 存储方式:localStorage(纯前端，无后端，保护隐私)
 - 请求头:`Authorization: token ${PAT}`
 
 **数据获取流程:**
@@ -545,7 +547,7 @@ export class GithubAPI {
 - **online模式**(默认):
     - 使用OnlineBuilder实时从GitHub API获取文件
     - 适用于公开仓库
-    - 支持代理模式(HomePage.vue第40-45行,localStorage持久化)
+    - 支持代理模式(HomePage.vue第40-45行，localStorage持久化)
 - **file模式**:
     - 使用FileBuilder从用户上传的ZIP构建
     - 适用于私有仓库或网络受限环境
@@ -556,19 +558,19 @@ export class GithubAPI {
 
 **1. 抽象工厂模式**(Builder模块)
 
-- **设计模式**:AbstractBuilder抽象基类定义构建流程,OnlineBuilder和FileBuilder实现具体获取逻辑
+- **设计模式**:AbstractBuilder抽象基类定义构建流程，OnlineBuilder和FileBuilder实现具体获取逻辑
 - **优势**:
-    - 将构建逻辑与数据源解耦,便于扩展(AbstractBuilder第54-406行)
-    - 代码复用:核心流程在AbstractBuilder中实现,子类仅需实现`getFileTree()`
-    - 易于测试:可单独测试合并、转换逻辑,无需依赖网络
+    - 将构建逻辑与数据源解耦，便于扩展(AbstractBuilder第54-406行)
+    - 代码复用:核心流程在AbstractBuilder中实现，子类仅需实现`getFileTree()`
+    - 易于测试:可单独测试合并、转换逻辑，无需依赖网络
 
 **2. 策略模式**(Formatter模块)
 
 - **设计模式**:PathFormatter和RecipeFormatter封装不同的转换策略
 - **优势**:
-    - 版本适配逻辑隔离,不污染构建器代码
+    - 版本适配逻辑隔离，不污染构建器代码
     - 易于添加新版本支持:仅需修改Formatter
-    - 静态方法设计,无需实例化,降低内存开销
+    - 静态方法设计，无需实例化，降低内存开销
 
 **3. 反应式状态管理**(HomePage.vue)
 
@@ -579,7 +581,7 @@ export class GithubAPI {
     - 简化逻辑:避免手动DOM操作和事件监听
 
 - 主模块 + 可选模块 + 版本模块的三层结构
-- 每个模块独立开发和维护,支持热插拔
+- 每个模块独立开发和维护，支持热插拔
 - 模块配置标准化(`module.config.json`)
 
 **2. 智能版本适配系统**
@@ -593,14 +595,14 @@ export class GithubAPI {
 
 **3. 冲突检测与依赖管理**
 
-- **互斥关系**(`breaks`):声明不兼容模块,UI自动禁用冲突选项
+- **互斥关系**(`breaks`):声明不兼容模块，UI自动禁用冲突选项
 - **绑定关系**(`bindings`):自动选择依赖模块
 - **权重系统**(`weight`):细粒度控制文件覆盖优先级
 
 **4. 双构建器模式**
 
-- **OnlineBuilder**:GitHub API实时构建,适用于公开仓库
-- **FileBuilder**:本地ZIP构建,支持私有仓库和离线场景
+- **OnlineBuilder**:GitHub API实时构建，适用于公开仓库
+- **FileBuilder**:本地ZIP构建，支持私有仓库和离线场景
 - 统一接口设计(AbstractBuilder抽象类)
 
 **5. 跨平台模组支持**
@@ -614,7 +616,7 @@ export class GithubAPI {
 
 **6. 纯前端架构**
 
-- 无需服务器,静态部署即可运行
+- 无需服务器，静态部署即可运行
 - 数据安全:PAT存储在用户本地浏览器
 - JSZip实现客户端ZIP打包
 
@@ -630,8 +632,8 @@ export class GithubAPI {
 **阶段一:仓库加载**
 
 1. 用户输入GitHub仓库URL(如`https://github.com/XeKr-Dev/minecraft-pack-template`)
-2. 点击"加载"按钮,触发`loadRepo()`
-3. 解析仓库地址,更新URL路由(`/#/XeKr-Dev/minecraft-pack-template`)
+2. 点击"加载"按钮，触发`loadRepo()`
+3. 解析仓库地址，更新URL路由(`/#/XeKr-Dev/minecraft-pack-template`)
 4. 并行请求:
     - `config.json`:获取基本配置
     - `README.md`:获取项目说明
@@ -658,7 +660,7 @@ export class GithubAPI {
 
 **阶段三:构建过程**
 
-1. 点击"构建"按钮,触发`build()`
+1. 点击"构建"按钮，触发`build()`
 2. 构建器初始化:
     - 确定使用OnlineBuilder或FileBuilder
     - 获取目标版本的pack_format信息
@@ -784,19 +786,19 @@ export class GithubAPI {
 
 **1. 抽象工厂模式**(Builder模块)
 
-- **设计模式**:AbstractBuilder抽象基类定义构建流程,OnlineBuilder和FileBuilder实现具体获取逻辑
+- **设计模式**:AbstractBuilder抽象基类定义构建流程，OnlineBuilder和FileBuilder实现具体获取逻辑
 - **优势**:
-    - 将构建逻辑与数据源解耦,便于扩展(AbstractBuilder第54-406行)
-    - 代码复用:核心流程在AbstractBuilder中实现,子类仅需实现`getFileTree()`
-    - 易于测试:可单独测试合并、转换逻辑,无需依赖网络
+    - 将构建逻辑与数据源解耦，便于扩展(AbstractBuilder第54-406行)
+    - 代码复用:核心流程在AbstractBuilder中实现，子类仅需实现`getFileTree()`
+    - 易于测试:可单独测试合并、转换逻辑，无需依赖网络
 
 **2. 策略模式**(Formatter模块)
 
 - **设计模式**:PathFormatter和RecipeFormatter封装不同的转换策略
 - **优势**:
-    - 版本适配逻辑隔离,不污染构建器代码
+    - 版本适配逻辑隔离，不污染构建器代码
     - 易于添加新版本支持:仅需修改Formatter
-    - 静态方法设计,无需实例化,降低内存开销
+    - 静态方法设计，无需实例化，降低内存开销
 
 **3. 响应式状态管理**(HomePage.vue)
 
@@ -808,8 +810,8 @@ export class GithubAPI {
 
 **4. 依赖注入模式**
 
-- **GitHub API封装**:GithubAPI静态类提供统一接口,内部处理认证和代理
-- **Request模块**:封装Axios,自动添加GitHub PAT认证头
+- **GitHub API封装**:GithubAPI静态类提供统一接口，内部处理认证和代理
+- **Request模块**:封装Axios，自动添加GitHub PAT认证头
 - **优势**:便于单元测试(可模拟API响应)和Mock测试
 
 ## 四、创新点
@@ -831,8 +833,8 @@ export class GithubAPI {
     - 严格模式(配置`strict: true`):版本必须完全匹配(AbstractBuilder第361行)
     - 反向排序(配置`version_reverse: true`):支持旧版本在前的排序逻辑
 - **双版本系统**:
-    - `datapack_version`:1-69+,每个快照版都可能变化
-    - `resources_version`:1-46+,资源包版本独立管理
+    - `datapack_version`:1-69+，每个快照版都可能变化
+    - `resources_version`:1-46+，资源包版本独立管理
     - 根据构建类型自动选择对应的pack_format(AbstractBuilder第268行)
 - **支持版本跨度**:
     - minecraft_version.json包含200+版本信息(从远古版本到1.21.11+)
@@ -841,7 +843,7 @@ export class GithubAPI {
 
 **3. 纯前端零服务架构**
 
-- **完全静态部署**:无需后端服务器,降低运维成本
+- **完全静态部署**:无需后端服务器，降低运维成本
 - **数据隐私保护**:GitHub PAT存储于用户本地浏览器
 - **客户端构建**:JSZip实现浏览器内ZIP打包
 - **实时构建**:直接从GitHub仓库拉取最新内容
@@ -866,7 +868,7 @@ export class GithubAPI {
     - `module.config.json`:6个字段定义模块属性(权重、互斥、绑定)
     - `*.set.config.json`:3个字段定义预设合集
 - **降低贡献门槛**:
-    - 无需编程知识,仅需编辑JSON配置
+    - 无需编程知识，仅需编辑JSON配置
     - 支持Fork模板仓库后直接修改内容
 - **去中心化分发**:
     - 通过GitHub实现版本控制和协作
@@ -877,25 +879,25 @@ export class GithubAPI {
 
 - **online模式**:
     - OnlineBuilder递归调用GitHub API获取文件树
-    - 适用于公开仓库,实时获取最新内容
-    - 支持代理模式:从4个国内镜像随机选择,解决网络访问问题
+    - 适用于公开仓库，实时获取最新内容
+    - 支持代理模式:从4个国内镜像随机选择，解决网络访问问题
 - **file模式**:
     - FileBuilder从用户上传的ZIP解析文件树
     - 支持私有仓库和完全离线环境
     - ZIP处理:自动移除根目录(仓库名前缀)(HomePage.vue第348-356行)
-- **统一接口**:AbstractBuilder定义抽象方法,两种模式使用相同的构建流程
+- **统一接口**:AbstractBuilder定义抽象方法，两种模式使用相同的构建流程
 
 **8. 渐进式用户体验**
 
 - **URL路由记忆**:
     - 仓库加载后自动更新URL为`/#/owner/repo`(HomePage.vue第133行)
-    - 支持直接分享链接,打开后自动加载指定仓库
+    - 支持直接分享链接，打开后自动加载指定仓库
 - **伪进度条**:
     - FakeProgress组件模拟构建过程(0%→90%动画)
-    - 实际完成后瞬间跳转100%,提供视觉反馈
+    - 实际完成后瞬间跳转100%，提供视觉反馈
 - **Markdown渲染**:
     - MarkdownView组件集成Marked + DOMPurify
-    - 直接展示仓库README,无需跳转GitHub页面
+    - 直接展示仓库README，无需跳转GitHub页面
 - **建议版本自动预选**:
     - config.json中配置`suggested_version`字段
     - 加载仓库后自动选中建议版本(HomePage.vue第137行)
@@ -907,7 +909,7 @@ export class GithubAPI {
 
 **1. 异步并发处理**
 
-系统在多个关键节点采用`Promise.all()`并发处理,显著提升性能:
+系统在多个关键节点采用`Promise.all()`并发处理，显著提升性能:
 
 ```typescript
 // 场景1:并发加载所有模块(HomePage.vue第134-152行)
@@ -942,22 +944,22 @@ if (this.config.icon) {
 }
 ```
 
-并发加载所有模块文件树,相比串行加载可减少60%-80%的网络等待时间。
+并发加载所有模块文件树，相比串行加载可减少60%-80%的网络等待时间。
 
 **2. 懒加载与按需获取**
 
 - **懒加载策略**:
     - 仓库加载时仅获取`config.json`和`module.config.json`(元数据)
     - 文件内容仅在点击"构建"时才获取(HomePage.vue第287-336行)
-    - 避免不必要的网络请求,节省API配额
+    - 避免不必要的网络请求，节省API配额
 - **按需过滤**:
     - 构建"资源包"时跳过`data/`目录(OnlineBuilder第28-30行)
     - 构建"数据包"时跳过`assets/`目录(OnlineBuilder第31-33行)
-    - 在文件树递归过程中提前过滤,减少约50%的API调用
+    - 在文件树递归过程中提前过滤，减少约50%的API调用
 
 **3. Base64编码优化**
 
-GitHub API返回的文件内容为Base64编码,系统采用高效解码策略:
+GitHub API返回的文件内容为Base64编码，系统采用高效解码策略:
 
 ```typescript
 class AbstractBuilder {
@@ -970,7 +972,7 @@ class AbstractBuilder {
         for (let i = 0; i < binaryString.length; i++) {
             bytes[i] = binaryString.charCodeAt(i)
         }
-        zip.file(path, buffer) // 直接传入ArrayBuffer,避免字符串中转
+        zip.file(path, buffer) // 直接传入ArrayBuffer，避免字符串中转
     }
 }
 ```
@@ -986,7 +988,7 @@ class AbstractBuilder {
     }
     ```
 - **深度优先遍历**:
-    - `mergeFileOrTree()`采用DFS合并策略,O(n)时间复杂度(AbstractBuilder第95-124行)
+    - `mergeFileOrTree()`采用DFS合并策略，O(n)时间复杂度(AbstractBuilder第95-124行)
     - `fileTreeToZip()`递归遍历文件树生成ZIP(AbstractBuilder第152-175行)
 - **路径处理优化**:
     - `processPath()`统一处理相对路径和绝对路径(AbstractBuilder第82-93行)
@@ -1004,7 +1006,7 @@ class AbstractBuilder {
 
     // 避免在循环中重复查询
     public preprocessContent(content: string, path: string) {
-        // 直接使用this.minecraftVersion,无需每次查询mcVersions
+        // 直接使用this.minecraftVersion，无需每次查询mcVersions
         return RecipeFormatter.format(content, this.minecraftVersion)
     }
 }
@@ -1012,17 +1014,17 @@ class AbstractBuilder {
 
 **6. 内存优化策略**
 
-- **流式ZIP生成**:JSZip采用流式API,大文件不会全部加载到内存
-- **Blob异步生成**:`zip.generateAsync({type: "blob"})`异步处理,避免阻塞UI线程
-- **模块权重排序**:构建前一次性排序(O(n log n)),避免每次合并时排序(AbstractBuilder第308行)
-- **事件监听清理**:Vue组件卸载时自动清理状态,防止内存泄漏
+- **流式ZIP生成**:JSZip采用流式API，大文件不会全部加载到内存
+- **Blob异步生成**:`zip.generateAsync({type: "blob"})`异步处理，避免阻塞UI线程
+- **模块权重排序**:构建前一次性排序(O(n log n))，避免每次合并时排序(AbstractBuilder第308行)
+- **事件监听清理**:Vue组件卸载时自动清理状态，防止内存泄漏
 
 ## 六、应用场景
 
 **1. 资源包开发者**
 
-- 提供多个可选材质模块,让玩家自由组合
-- 维护多版本兼容,自动适配目标版本
+- 提供多个可选材质模块，让玩家自由组合
+- 维护多版本兼容，自动适配目标版本
 - 示例:PvP材质包(低火、短剑、清爽界面等可选模块)
 
 **2. 数据包开发者**
@@ -1038,38 +1040,38 @@ class AbstractBuilder {
 
 ## 结论
 
-本项目通过创新的纯前端架构和模块化设计,为Minecraft资源包/数据包开发提供了一套完整的工具链解决方案。核心技术贡献包括:
+本项目通过创新的纯前端架构和模块化设计，为Minecraft资源包/数据包开发提供了一套完整的工具链解决方案。核心技术贡献包括:
 
 **1. 架构创新**
 
-- **抽象工厂模式的构建器系统**:AbstractBuilder(407行)定义核心流程,OnlineBuilder和FileBuilder实现双模式支持
-- **三层模块化覆盖系统**:主模块+版本模块+可选模块的灵活组合,权重机制实现精细化文件覆盖控制
-- **零服务器架构**:完全静态部署,GitHub PAT本地存储,JSZip浏览器内打包,降低运维成本并保护用户隐私
+- **抽象工厂模式的构建器系统**:AbstractBuilder(407行)定义核心流程，OnlineBuilder和FileBuilder实现双模式支持
+- **三层模块化覆盖系统**:主模块+版本模块+可选模块的灵活组合，权重机制实现精细化文件覆盖控制
+- **零服务器架构**:完全静态部署，GitHub PAT本地存储，JSZip浏览器内打包，降低运维成本并保护用户隐私
 
 **2. 技术突破**
 
 - **智能版本适配引擎**:
     - PathFormatter自动处理pack_format 45+的路径变化(复数↔单数双向转换)
-    - RecipeFormatter实现三代配方格式的链式转换(234行,支持任意版本间兼容)
+    - RecipeFormatter实现三代配方格式的链式转换(234行，支持任意版本间兼容)
     - 双版本系统独立管理datapack_version和resources_version
 - **依赖关系图谱系统**:
     - 双向互斥检测(`breaks`):正向+反向检测冲突(HomePage.vue第246-260行)
     - 递归依赖绑定(`bindings`):深度优先遍历自动选择传递依赖(HomePage.vue第271-285行)
     - UI实时反馈:视觉化显示模块可用状态
-- **多平台模组支持**:一键打包为Fabric/Quilt/Forge/NeoForge格式,单一资源包同时兼容原版和模组环境
+- **多平台模组支持**:一键打包为Fabric/Quilt/Forge/NeoForge格式，单一资源包同时兼容原版和模组环境
 
 **3. 性能优化**
 
-- **异步并发处理**:Promise.all()并发加载模块文件树,相比串行减少60%-80%等待时间
-- **懒加载策略**:仅加载元数据,文件内容按需获取,节省API配额
-- **按需过滤**:构建过程中提前过滤不需要的目录,减少约50%的API调用
+- **异步并发处理**:Promise.all()并发加载模块文件树，相比串行减少60%-80%等待时间
+- **懒加载策略**:仅加载元数据，文件内容按需获取，节省API配额
+- **按需过滤**:构建过程中提前过滤不需要的目录，减少约50%的API调用
 - **内存优化**:流式ZIP生成、Blob异步处理、版本信息缓存
 
 **4. 用户体验**
 
 - **URL路由记忆**:支持直接分享仓库链接
 - **伪进度条**:提供视觉反馈(0%→90%动画)
-- **Markdown渲染**:直接展示README,无需跳转
+- **Markdown渲染**:直接展示README，无需跳转
 - **代理持久化**:localStorage保存用户设置
 - **建议版本预选**:自动选中推荐版本
 
@@ -1077,7 +1079,7 @@ class AbstractBuilder {
 
 - **标准化配置格式**:TypeScript接口定义严格类型约束
 - **项目模板仓库**:开箱即用的minecraft-pack-template
-- **降低贡献门槛**:无需编程知识,仅需编辑JSON
+- **降低贡献门槛**:无需编程知识，仅需编辑JSON
 - **去中心化分发**:通过GitHub实现版本控制和协作
 
 **技术栈优势**:
@@ -1089,4 +1091,6 @@ class AbstractBuilder {
 
 **项目影响**:
 
-项目显著降低了资源包开发门槛,使开发者能够专注于内容创作而非技术细节,同时为玩家提供了高度定制化的选择自由。标准化的配置格式和项目模板促进了社区协作,通过GitHub实现去中心化的开源分发模式。该工具已成为Minecraft社区资源开发的实用工具,未来可进一步扩展功能(如模块依赖可视化、批量构建、CI/CD集成),推动Minecraft内容创作生态的繁荣发展。
+项目显著降低了资源包开发门槛，使开发者能够专注于内容创作而非技术细节，同时为玩家提供了高度定制化的选择自由。
+标准化的配置格式和项目模板促进了社区协作，通过GitHub实现去中心化的开源分发模式。该工具已成为Minecraft社区资源开发的实用工具，
+未来可进一步扩展功能，推动Minecraft内容创作生态的繁荣发展。
