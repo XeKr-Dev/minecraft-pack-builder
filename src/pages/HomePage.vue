@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {reactive, ref} from "vue";
+import {onMounted, reactive, ref, watch} from "vue";
 import {Message} from "@/scripts/message";
 import MarkdownView from "@/components/MarkdownView.vue";
 import {GithubAPI} from "@/scripts/github";
@@ -35,6 +35,18 @@ function getUrl() {
 
 const repoUrl = ref(`https://github.com/${getUrl()}`)
 const useProxy = ref(false)
+
+watch(useProxy, (newUseProxy) => {
+  if (newUseProxy) {
+    localStorage.setItem('useProxy', newUseProxy.toString())
+  } else {
+    localStorage.removeItem('useProxy')
+  }
+})
+
+onMounted(() => {
+  useProxy.value = localStorage.getItem('useProxy') === 'true'
+})
 
 interface Status {
   loading: boolean
