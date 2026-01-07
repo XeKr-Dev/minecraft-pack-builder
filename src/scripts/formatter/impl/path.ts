@@ -52,8 +52,8 @@ export class PathFormatter {
                 if (version.datapack_version >= key) {
                     // 升级：from -> to
                     for (const data of value) {
-                        if (subPath === data.from || subPath.startsWith(data.from)) {
-                            const newSubPath = subPath.replace(data.from, data.to)
+                        const newSubPath = PathFormatter.processPath(subPath, data.from, data.to)
+                        if (newSubPath) {
                             pathSplit.splice(2, pathSplit.length - 2, ...newSubPath.split("/"))
                             break
                         }
@@ -61,8 +61,8 @@ export class PathFormatter {
                 } else {
                     // 降级：to -> from
                     for (const data of value) {
-                        if (subPath === data.to || subPath.startsWith(data.to)) {
-                            const newSubPath = subPath.replace(data.to, data.from)
+                        const newSubPath = PathFormatter.processPath(subPath, data.to, data.from)
+                        if (newSubPath) {
                             pathSplit.splice(2, pathSplit.length - 2, ...newSubPath.split("/"))
                             break
                         }
@@ -80,8 +80,8 @@ export class PathFormatter {
                 if (version.resources_version >= key) {
                     // 升级：from -> to
                     for (const data of value) {
-                        if (subPath === data.from || subPath.startsWith(data.from + "/")) {
-                            const newSubPath = subPath.replace(data.from, data.to)
+                        const newSubPath = PathFormatter.processPath(subPath, data.from, data.to)
+                        if (newSubPath) {
                             pathSplit.splice(2, pathSplit.length - 2, ...newSubPath.split("/"))
                             break
                         }
@@ -89,8 +89,8 @@ export class PathFormatter {
                 } else {
                     // 降级：to -> from
                     for (const data of value) {
-                        if (subPath === data.to || subPath.startsWith(data.to + "/")) {
-                            const newSubPath = subPath.replace(data.to, data.from)
+                        const newSubPath = PathFormatter.processPath(subPath, data.to, data.from)
+                        if (newSubPath) {
                             pathSplit.splice(2, pathSplit.length - 2, ...newSubPath.split("/"))
                             break
                         }
@@ -98,8 +98,13 @@ export class PathFormatter {
                 }
             }
         }
+        return pathSplit.join("/")
+    }
 
-        path = pathSplit.join("/")
-        return path
+    private static processPath(path: string, from: string, to: string): string | undefined {
+        if (path === from || path.startsWith(from)) {
+            return to + path.slice(from.length)
+        }
+        return undefined
     }
 }
