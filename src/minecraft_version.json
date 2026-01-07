@@ -1,4 +1,9 @@
 {
+  "26.1-snapshot-2": {
+    "type": "snapshot",
+    "datapack_version": 96,
+    "resources_version": 77
+  },
   "26.1-snapshot-1": {
     "type": "snapshot",
     "datapack_version": 95,

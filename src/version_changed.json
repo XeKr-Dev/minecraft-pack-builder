@@ -1,4 +1,8 @@
 {
+  "26.1-snapshot-2": {
+    "datapack_version": 96.0,
+    "resources_version": 77.0
+  },
   "26.1-snapshot-1": {
     "datapack_version": 95.0,
     "resources_version": 76.0
