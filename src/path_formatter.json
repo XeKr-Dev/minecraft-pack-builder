@@ -1,0 +1,338 @@
+{
+  "data": {
+    "45": [
+      {
+        "from": "structures",
+        "to": "structure"
+      },
+      {
+        "from": "advancements",
+        "to": "advancement"
+      },
+      {
+        "from": "recipes",
+        "to": "recipe"
+      },
+      {
+        "from": "loot_tables",
+        "to": "loot_table"
+      },
+      {
+        "from": "predicates",
+        "to": "predicate"
+      },
+      {
+        "from": "item_modifiers",
+        "to": "item_modifier"
+      },
+      {
+        "from": "functions",
+        "to": "function"
+      }
+    ]
+  },
+  "assets": {
+    "77": [
+      {
+        "from": "entity/armorstand/wood.png",
+        "to": "entity/armorstand/armorstand.png"
+      },
+      {
+        "from": "entity/cat/all_black.png",
+        "to": "entity/cat/cat_all_black.png"
+      },
+      {
+        "from": "entity/cat/black.png",
+        "to": "entity/cat/cat_black.png"
+      },
+      {
+        "from": "entity/cat/british_shorthair.png",
+        "to": "entity/cat/cat_british_shorthair.png"
+      },
+      {
+        "from": "entity/cat/calico.png",
+        "to": "entity/cat/cat_calico.png"
+      },
+      {
+        "from": "entity/cat/jellie.png",
+        "to": "entity/cat/cat_jellie.png"
+      },
+      {
+        "from": "entity/cat/persian.png",
+        "to": "entity/cat/cat_persian.png"
+      },
+      {
+        "from": "entity/cat/ragdoll.png",
+        "to": "entity/cat/cat_ragdoll.png"
+      },
+      {
+        "from": "entity/cat/red.png",
+        "to": "entity/cat/cat_red.png"
+      },
+      {
+        "from": "entity/cat/siamese.png",
+        "to": "entity/cat/cat_siamese.png"
+      },
+      {
+        "from": "entity/cat/tabby.png",
+        "to": "entity/cat/cat_tabby.png"
+      },
+      {
+        "from": "entity/cat/white.png",
+        "to": "entity/cat/cat_white.png"
+      },
+      {
+        "from": "entity/chicken/cold_chicken.png",
+        "to": "entity/chicken/chicken_cold.png"
+      },
+      {
+        "from": "entity/chicken/temperate_chicken.png",
+        "to": "entity/chicken/chicken_temperate.png"
+      },
+      {
+        "from": "entity/chicken/warm_chicken.png",
+        "to": "entity/chicken/chicken_warm.png"
+      },
+      {
+        "from": "entity/copper_golem/exposed_copper_golem.png",
+        "to": "entity/copper_golem/copper_golem_exposed.png"
+      },
+      {
+        "from": "entity/copper_golem/exposed_copper_golem_eyes.png",
+        "to": "entity/copper_golem/copper_golem_eyes_exposed.png"
+      },
+      {
+        "from": "entity/copper_golem/oxidized_copper_golem_eyes.png",
+        "to": "entity/copper_golem/copper_golem_eyes_oxidized.png"
+      },
+      {
+        "from": "entity/copper_golem/weathered_copper_golem_eyes.png",
+        "to": "entity/copper_golem/copper_golem_eyes_weathered.png"
+      },
+      {
+        "from": "entity/copper_golem/oxidized_copper_golem.png",
+        "to": "entity/copper_golem/copper_golem_oxidized.png"
+      },
+      {
+        "from": "entity/copper_golem/weathered_copper_golem.png",
+        "to": "entity/copper_golem/copper_golem_weathered.png"
+      },
+      {
+        "from": "entity/cow/cold_cow.png",
+        "to": "entity/cow/cow_cold.png"
+      },
+      {
+        "from": "entity/cow/temperate_cow.png",
+        "to": "entity/cow/cow_temperate.png"
+      },
+      {
+        "from": "entity/cow/warm_cow.png",
+        "to": "entity/cow/cow_warm.png"
+      },
+      {
+        "from": "entity/cow/brown_mooshroom.png",
+        "to": "entity/cow/mooshroom_brown.png"
+      },
+      {
+        "from": "entity/cow/red_mooshroom.png",
+        "to": "entity/cow/mooshroom_red.png"
+      },
+      {
+        "from": "entity/fox/snow_fox.png",
+        "to": "entity/fox/fox_snow.png"
+      },
+      {
+        "from": "entity/fox/snow_fox_sleep.png",
+        "to": "entity/fox/fox_snow_sleep.png"
+      },
+      {
+        "from": "entity/frog/cold_frog.png",
+        "to": "entity/frog/frog_cold.png"
+      },
+      {
+        "from": "entity/frog/temperate_frog.png",
+        "to": "entity/frog/frog_temperate.png"
+      },
+      {
+        "from": "entity/frog/warm_frog.png",
+        "to": "entity/frog/frog_warm.png"
+      },
+      {
+        "from": "entity/llama/brown.png",
+        "to": "entity/llama/llama_brown.png"
+      },
+      {
+        "from": "entity/llama/creamy.png",
+        "to": "entity/llama/llama_creamy.png"
+      },
+      {
+        "from": "entity/llama/gray.png",
+        "to": "entity/llama/llama_gray.png"
+      },
+      {
+        "from": "entity/llama/spit.png",
+        "to": "entity/llama/llama_spit.png"
+      },
+      {
+        "from": "entity/llama/white.png",
+        "to": "entity/llama/llama_white.png"
+      },
+      {
+        "from": "entity/panda/aggressive_panda.png",
+        "to": "entity/panda/panda_aggressive.png"
+      },
+      {
+        "from": "entity/panda/brown_panda.png",
+        "to": "entity/panda/panda_brown.png"
+      },
+      {
+        "from": "entity/panda/lazy_panda.png",
+        "to": "entity/panda/panda_lazy.png"
+      },
+      {
+        "from": "entity/panda/playful_panda.png",
+        "to": "entity/panda/panda_playful.png"
+      },
+      {
+        "from": "entity/panda/weak_panda.png",
+        "to": "entity/panda/panda_weak.png"
+      },
+      {
+        "from": "entity/panda/worried_panda.png",
+        "to": "entity/panda/panda_worried.png"
+      },
+      {
+        "from": "entity/pig/cold_pig.png",
+        "to": "entity/pig/pig_cold.png"
+      },
+      {
+        "from": "entity/pig/temperate_pig.png",
+        "to": "entity/pig/pig_temperate.png"
+      },
+      {
+        "from": "entity/pig/warm_pig.png",
+        "to": "entity/pig/pig_warm.png"
+      },
+      {
+        "from": "entity/projectiles/spectral.png",
+        "to": "entity/projectiles/arrow_spectral.png"
+      },
+      {
+        "from": "entity/projectiles/tipped.png",
+        "to": "entity/projectiles/arrow_tipped.png"
+      },
+      {
+        "from": "entity/turtle/big_sea_turtle.png",
+        "to": "entity/turtle/turtle.pngentity/armadillo.png"
+      },
+      {
+        "from": "entity/banner_base.png",
+        "to": "entity/banner/banner_base.png"
+      },
+      {
+        "from": "entity/bat.png",
+        "to": "entity/bat/bat.png"
+      },
+      {
+        "from": "entity/beacon_beam.png",
+        "to": "entity/beacon/beacon_beam.png"
+      },
+      {
+        "from": "entity/blaze.png",
+        "to": "entity/blaze/blaze.png"
+      },
+      {
+        "from": "entity/dolphin.png",
+        "to": "entity/dolphin/dolphin.png"
+      },
+      {
+        "from": "entity/enchanting_table_book.png",
+        "to": "entity/enchantment/enchanting_table_book.png"
+      },
+      {
+        "from": "entity/end_gateway_beam.png",
+        "to": "entity/end_portal/end_gateway_beam.png"
+      },
+      {
+        "from": "entity/end_portal.png",
+        "to": "entity/end_portal/end_portal.png"
+      },
+      {
+        "from": "entity/endermite.png",
+        "to": "entity/endermite/endermite.png"
+      },
+      {
+        "from": "entity/experience_orb.png",
+        "to": "entity/experience/experience_orb.png"
+      },
+      {
+        "from": "entity/fishing_hook.png",
+        "to": "entity/fishing/fishing_hook.png"
+      },
+      {
+        "from": "entity/guardian.png",
+        "to": "entity/guardian/guardian.png"
+      },
+      {
+        "from": "entity/guardian_beam.png",
+        "to": "entity/guardian/guardian_beam.png"
+      },
+      {
+        "from": "entity/guardian_elder.png",
+        "to": "entity/guardian/guardian_elder.png"
+      },
+      {
+        "from": "entity/lead_knot.png",
+        "to": "entity/lead_knot/lead_knot.png"
+      },
+      {
+        "from": "entity/minecart.png",
+        "to": "entity/minecart/minecart.png"
+      },
+      {
+        "from": "entity/phantom.png",
+        "to": "entity/phantom/phantom.png"
+      },
+      {
+        "from": "entity/phantom_eyes.png",
+        "to": "entity/phantom/phantom_eyes.png"
+      },
+      {
+        "from": "entity/shield_base.png",
+        "to": "entity/shield/shield_base.png"
+      },
+      {
+        "from": "entity/shield_base_nopattern.png",
+        "to": "entity/shield/shield_base_nopattern.png"
+      },
+      {
+        "from": "entity/silverfish.png",
+        "to": "entity/silverfish/silverfish.png"
+      },
+      {
+        "from": "entity/snow_golem.png",
+        "to": "entity/snow_golem/snow_golem.png"
+      },
+      {
+        "from": "entity/spider_eyes.png",
+        "to": "entity/spider/spider_eyes.png"
+      },
+      {
+        "from": "entity/trident.png",
+        "to": "entity/trident/trident.png"
+      },
+      {
+        "from": "entity/trident_riptide.png",
+        "to": "entity/trident/trident_riptide.png"
+      },
+      {
+        "from": "entity/wandering_trader.png",
+        "to": "entity/wandering_trader/wandering_trader.png"
+      },
+      {
+        "from": "entity/witch.png",
+        "to": "entity/witch/witch.png"
+      }
+    ]
+  }
+}

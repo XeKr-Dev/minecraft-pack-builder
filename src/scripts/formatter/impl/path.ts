@@ -1,21 +1,23 @@
+import path_formatter from "@/path_formatter.json";
+
+const pathFormatter: {
+    assets: { [key: string]: { from: string, to: string }[] },
+    data: { [key: string]: { from: string, to: string }[] }
+} = path_formatter
+
 export class PathFormatter {
     private static dataPathMap: Map<number, { from: string, to: string }[]> = new Map()
     private static assetsPathMap: Map<number, { from: string, to: string }[]> = new Map()
 
     static {
-        const list: { from: string, to: string }[] = []
-        for (const [from, to] of [
-            ["structures", "structure"],
-            ["advancements", "advancement"],
-            ["recipes", "recipe"],
-            ["loot_tables", "loot_table"],
-            ["predicates", "predicate"],
-            ["item_modifiers", "item_modifier"],
-            ["functions", "function"]
-        ]) {
-            list.push({from, to})
+        for (const key in pathFormatter.data) {
+            const value = pathFormatter.data[key]
+            this.dataPathMap.set(parseInt(key), value)
         }
-        PathFormatter.dataPathMap.set(45, list)
+        for (const key in pathFormatter.assets) {
+            const value = pathFormatter.assets[key]
+            this.assetsPathMap.set(parseInt(key), value)
+        }
     }
 
     public static format(
@@ -26,39 +28,65 @@ export class PathFormatter {
         }
     ): string {
         const pathSplit: string[] = path.split("/")
+
         if (pathSplit[0] === "data") {
+            // 获取 namespace 后的路径部分
+            const subPath = pathSplit.slice(2).join("/")
+
             for (const key of this.dataPathMap.keys()) {
                 const value = this.dataPathMap.get(key)
                 if (!value) continue
+
                 if (version.datapack_version >= key) {
+                    // 升级：from -> to
                     for (const data of value) {
-                        if (pathSplit[2] !== data.from) continue
-                        pathSplit[2] = data.to
+                        if (subPath === data.from || subPath.startsWith(data.from + "/")) {
+                            const newSubPath = subPath.replace(data.from, data.to)
+                            pathSplit.splice(2, pathSplit.length - 2, ...newSubPath.split("/"))
+                            break
+                        }
                     }
                 } else {
+                    // 降级：to -> from
                     for (const data of value) {
-                        if (pathSplit[2] !== data.to) continue
-                        pathSplit[2] = data.from
+                        if (subPath === data.to || subPath.startsWith(data.to + "/")) {
+                            const newSubPath = subPath.replace(data.to, data.from)
+                            pathSplit.splice(2, pathSplit.length - 2, ...newSubPath.split("/"))
+                            break
+                        }
                     }
                 }
             }
         } else if (pathSplit[0] === "assets") {
+            // 获取 namespace 后的路径部分
+            const subPath = pathSplit.slice(2).join("/")
+
             for (const key of this.assetsPathMap.keys()) {
                 const value = this.assetsPathMap.get(key)
                 if (!value) continue
+
                 if (version.resources_version >= key) {
+                    // 升级：from -> to
                     for (const data of value) {
-                        if (pathSplit[2] !== data.from) continue
-                        pathSplit[2] = data.to
+                        if (subPath === data.from || subPath.startsWith(data.from + "/")) {
+                            const newSubPath = subPath.replace(data.from, data.to)
+                            pathSplit.splice(2, pathSplit.length - 2, ...newSubPath.split("/"))
+                            break
+                        }
                     }
                 } else {
+                    // 降级：to -> from
                     for (const data of value) {
-                        if (pathSplit[2] !== data.to) continue
-                        pathSplit[2] = data.from
+                        if (subPath === data.to || subPath.startsWith(data.to + "/")) {
+                            const newSubPath = subPath.replace(data.to, data.from)
+                            pathSplit.splice(2, pathSplit.length - 2, ...newSubPath.split("/"))
+                            break
+                        }
                     }
                 }
             }
         }
+
         path = pathSplit.join("/")
         return path
     }
