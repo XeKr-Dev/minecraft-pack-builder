@@ -1,8 +1,8 @@
 import path_formatter from "@/path_formatter.json";
 
 const pathFormatter: {
-    assets: { [key: string]: { from: string, to: string }[] },
-    data: { [key: string]: { from: string, to: string }[] }
+    assets: { [key: string]: string[] }, // "<from> -> <to>"
+    data: { [key: string]: string[] } // "<from> -> <to>"
 } = path_formatter
 
 export class PathFormatter {
@@ -12,11 +12,23 @@ export class PathFormatter {
     static {
         for (const key in pathFormatter.data) {
             const value = pathFormatter.data[key]
-            this.dataPathMap.set(parseInt(key), value)
+            this.dataPathMap.set(parseInt(key), value.map(item => {
+                const split = item.split(" -> ")
+                return {
+                    from: split[0],
+                    to: split[1]
+                }
+            }))
         }
         for (const key in pathFormatter.assets) {
             const value = pathFormatter.assets[key]
-            this.assetsPathMap.set(parseInt(key), value)
+            this.assetsPathMap.set(parseInt(key), value.map(item => {
+                const split = item.split(" -> ")
+                return {
+                    from: split[0],
+                    to: split[1]
+                }
+            }))
         }
     }
 

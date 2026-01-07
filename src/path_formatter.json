@@ -1,338 +1,92 @@
 {
-  "data": {
-    "45": [
-      {
-        "from": "structures",
-        "to": "structure"
-      },
-      {
-        "from": "advancements",
-        "to": "advancement"
-      },
-      {
-        "from": "recipes",
-        "to": "recipe"
-      },
-      {
-        "from": "loot_tables",
-        "to": "loot_table"
-      },
-      {
-        "from": "predicates",
-        "to": "predicate"
-      },
-      {
-        "from": "item_modifiers",
-        "to": "item_modifier"
-      },
-      {
-        "from": "functions",
-        "to": "function"
-      }
-    ]
-  },
   "assets": {
     "77": [
-      {
-        "from": "entity/armorstand/wood.png",
-        "to": "entity/armorstand/armorstand.png"
-      },
-      {
-        "from": "entity/cat/all_black.png",
-        "to": "entity/cat/cat_all_black.png"
-      },
-      {
-        "from": "entity/cat/black.png",
-        "to": "entity/cat/cat_black.png"
-      },
-      {
-        "from": "entity/cat/british_shorthair.png",
-        "to": "entity/cat/cat_british_shorthair.png"
-      },
-      {
-        "from": "entity/cat/calico.png",
-        "to": "entity/cat/cat_calico.png"
-      },
-      {
-        "from": "entity/cat/jellie.png",
-        "to": "entity/cat/cat_jellie.png"
-      },
-      {
-        "from": "entity/cat/persian.png",
-        "to": "entity/cat/cat_persian.png"
-      },
-      {
-        "from": "entity/cat/ragdoll.png",
-        "to": "entity/cat/cat_ragdoll.png"
-      },
-      {
-        "from": "entity/cat/red.png",
-        "to": "entity/cat/cat_red.png"
-      },
-      {
-        "from": "entity/cat/siamese.png",
-        "to": "entity/cat/cat_siamese.png"
-      },
-      {
-        "from": "entity/cat/tabby.png",
-        "to": "entity/cat/cat_tabby.png"
-      },
-      {
-        "from": "entity/cat/white.png",
-        "to": "entity/cat/cat_white.png"
-      },
-      {
-        "from": "entity/chicken/cold_chicken.png",
-        "to": "entity/chicken/chicken_cold.png"
-      },
-      {
-        "from": "entity/chicken/temperate_chicken.png",
-        "to": "entity/chicken/chicken_temperate.png"
-      },
-      {
-        "from": "entity/chicken/warm_chicken.png",
-        "to": "entity/chicken/chicken_warm.png"
-      },
-      {
-        "from": "entity/copper_golem/exposed_copper_golem.png",
-        "to": "entity/copper_golem/copper_golem_exposed.png"
-      },
-      {
-        "from": "entity/copper_golem/exposed_copper_golem_eyes.png",
-        "to": "entity/copper_golem/copper_golem_eyes_exposed.png"
-      },
-      {
-        "from": "entity/copper_golem/oxidized_copper_golem_eyes.png",
-        "to": "entity/copper_golem/copper_golem_eyes_oxidized.png"
-      },
-      {
-        "from": "entity/copper_golem/weathered_copper_golem_eyes.png",
-        "to": "entity/copper_golem/copper_golem_eyes_weathered.png"
-      },
-      {
-        "from": "entity/copper_golem/oxidized_copper_golem.png",
-        "to": "entity/copper_golem/copper_golem_oxidized.png"
-      },
-      {
-        "from": "entity/copper_golem/weathered_copper_golem.png",
-        "to": "entity/copper_golem/copper_golem_weathered.png"
-      },
-      {
-        "from": "entity/cow/cold_cow.png",
-        "to": "entity/cow/cow_cold.png"
-      },
-      {
-        "from": "entity/cow/temperate_cow.png",
-        "to": "entity/cow/cow_temperate.png"
-      },
-      {
-        "from": "entity/cow/warm_cow.png",
-        "to": "entity/cow/cow_warm.png"
-      },
-      {
-        "from": "entity/cow/brown_mooshroom.png",
-        "to": "entity/cow/mooshroom_brown.png"
-      },
-      {
-        "from": "entity/cow/red_mooshroom.png",
-        "to": "entity/cow/mooshroom_red.png"
-      },
-      {
-        "from": "entity/fox/snow_fox.png",
-        "to": "entity/fox/fox_snow.png"
-      },
-      {
-        "from": "entity/fox/snow_fox_sleep.png",
-        "to": "entity/fox/fox_snow_sleep.png"
-      },
-      {
-        "from": "entity/frog/cold_frog.png",
-        "to": "entity/frog/frog_cold.png"
-      },
-      {
-        "from": "entity/frog/temperate_frog.png",
-        "to": "entity/frog/frog_temperate.png"
-      },
-      {
-        "from": "entity/frog/warm_frog.png",
-        "to": "entity/frog/frog_warm.png"
-      },
-      {
-        "from": "entity/llama/brown.png",
-        "to": "entity/llama/llama_brown.png"
-      },
-      {
-        "from": "entity/llama/creamy.png",
-        "to": "entity/llama/llama_creamy.png"
-      },
-      {
-        "from": "entity/llama/gray.png",
-        "to": "entity/llama/llama_gray.png"
-      },
-      {
-        "from": "entity/llama/spit.png",
-        "to": "entity/llama/llama_spit.png"
-      },
-      {
-        "from": "entity/llama/white.png",
-        "to": "entity/llama/llama_white.png"
-      },
-      {
-        "from": "entity/panda/aggressive_panda.png",
-        "to": "entity/panda/panda_aggressive.png"
-      },
-      {
-        "from": "entity/panda/brown_panda.png",
-        "to": "entity/panda/panda_brown.png"
-      },
-      {
-        "from": "entity/panda/lazy_panda.png",
-        "to": "entity/panda/panda_lazy.png"
-      },
-      {
-        "from": "entity/panda/playful_panda.png",
-        "to": "entity/panda/panda_playful.png"
-      },
-      {
-        "from": "entity/panda/weak_panda.png",
-        "to": "entity/panda/panda_weak.png"
-      },
-      {
-        "from": "entity/panda/worried_panda.png",
-        "to": "entity/panda/panda_worried.png"
-      },
-      {
-        "from": "entity/pig/cold_pig.png",
-        "to": "entity/pig/pig_cold.png"
-      },
-      {
-        "from": "entity/pig/temperate_pig.png",
-        "to": "entity/pig/pig_temperate.png"
-      },
-      {
-        "from": "entity/pig/warm_pig.png",
-        "to": "entity/pig/pig_warm.png"
-      },
-      {
-        "from": "entity/projectiles/spectral.png",
-        "to": "entity/projectiles/arrow_spectral.png"
-      },
-      {
-        "from": "entity/projectiles/tipped.png",
-        "to": "entity/projectiles/arrow_tipped.png"
-      },
-      {
-        "from": "entity/turtle/big_sea_turtle.png",
-        "to": "entity/turtle/turtle.pngentity/armadillo.png"
-      },
-      {
-        "from": "entity/banner_base.png",
-        "to": "entity/banner/banner_base.png"
-      },
-      {
-        "from": "entity/bat.png",
-        "to": "entity/bat/bat.png"
-      },
-      {
-        "from": "entity/beacon_beam.png",
-        "to": "entity/beacon/beacon_beam.png"
-      },
-      {
-        "from": "entity/blaze.png",
-        "to": "entity/blaze/blaze.png"
-      },
-      {
-        "from": "entity/dolphin.png",
-        "to": "entity/dolphin/dolphin.png"
-      },
-      {
-        "from": "entity/enchanting_table_book.png",
-        "to": "entity/enchantment/enchanting_table_book.png"
-      },
-      {
-        "from": "entity/end_gateway_beam.png",
-        "to": "entity/end_portal/end_gateway_beam.png"
-      },
-      {
-        "from": "entity/end_portal.png",
-        "to": "entity/end_portal/end_portal.png"
-      },
-      {
-        "from": "entity/endermite.png",
-        "to": "entity/endermite/endermite.png"
-      },
-      {
-        "from": "entity/experience_orb.png",
-        "to": "entity/experience/experience_orb.png"
-      },
-      {
-        "from": "entity/fishing_hook.png",
-        "to": "entity/fishing/fishing_hook.png"
-      },
-      {
-        "from": "entity/guardian.png",
-        "to": "entity/guardian/guardian.png"
-      },
-      {
-        "from": "entity/guardian_beam.png",
-        "to": "entity/guardian/guardian_beam.png"
-      },
-      {
-        "from": "entity/guardian_elder.png",
-        "to": "entity/guardian/guardian_elder.png"
-      },
-      {
-        "from": "entity/lead_knot.png",
-        "to": "entity/lead_knot/lead_knot.png"
-      },
-      {
-        "from": "entity/minecart.png",
-        "to": "entity/minecart/minecart.png"
-      },
-      {
-        "from": "entity/phantom.png",
-        "to": "entity/phantom/phantom.png"
-      },
-      {
-        "from": "entity/phantom_eyes.png",
-        "to": "entity/phantom/phantom_eyes.png"
-      },
-      {
-        "from": "entity/shield_base.png",
-        "to": "entity/shield/shield_base.png"
-      },
-      {
-        "from": "entity/shield_base_nopattern.png",
-        "to": "entity/shield/shield_base_nopattern.png"
-      },
-      {
-        "from": "entity/silverfish.png",
-        "to": "entity/silverfish/silverfish.png"
-      },
-      {
-        "from": "entity/snow_golem.png",
-        "to": "entity/snow_golem/snow_golem.png"
-      },
-      {
-        "from": "entity/spider_eyes.png",
-        "to": "entity/spider/spider_eyes.png"
-      },
-      {
-        "from": "entity/trident.png",
-        "to": "entity/trident/trident.png"
-      },
-      {
-        "from": "entity/trident_riptide.png",
-        "to": "entity/trident/trident_riptide.png"
-      },
-      {
-        "from": "entity/wandering_trader.png",
-        "to": "entity/wandering_trader/wandering_trader.png"
-      },
-      {
-        "from": "entity/witch.png",
-        "to": "entity/witch/witch.png"
-      }
+      "entity/armorstand/wood.png -> entity/armorstand/armorstand.png",
+      "entity/cat/all_black.png -> entity/cat/cat_all_black.png",
+      "entity/cat/black.png -> entity/cat/cat_black.png",
+      "entity/cat/british_shorthair.png -> entity/cat/cat_british_shorthair.png",
+      "entity/cat/calico.png -> entity/cat/cat_calico.png",
+      "entity/cat/jellie.png -> entity/cat/cat_jellie.png",
+      "entity/cat/persian.png -> entity/cat/cat_persian.png",
+      "entity/cat/ragdoll.png -> entity/cat/cat_ragdoll.png",
+      "entity/cat/red.png -> entity/cat/cat_red.png",
+      "entity/cat/siamese.png -> entity/cat/cat_siamese.png",
+      "entity/cat/tabby.png -> entity/cat/cat_tabby.png",
+      "entity/cat/white.png -> entity/cat/cat_white.png",
+      "entity/chicken/cold_chicken.png -> entity/chicken/chicken_cold.png",
+      "entity/chicken/temperate_chicken.png -> entity/chicken/chicken_temperate.png",
+      "entity/chicken/warm_chicken.png -> entity/chicken/chicken_warm.png",
+      "entity/copper_golem/exposed_copper_golem.png -> entity/copper_golem/copper_golem_exposed.png",
+      "entity/copper_golem/exposed_copper_golem_eyes.png -> entity/copper_golem/copper_golem_eyes_exposed.png",
+      "entity/copper_golem/oxidized_copper_golem_eyes.png -> entity/copper_golem/copper_golem_eyes_oxidized.png",
+      "entity/copper_golem/weathered_copper_golem_eyes.png -> entity/copper_golem/copper_golem_eyes_weathered.png",
+      "entity/copper_golem/oxidized_copper_golem.png -> entity/copper_golem/copper_golem_oxidized.png",
+      "entity/copper_golem/weathered_copper_golem.png -> entity/copper_golem/copper_golem_weathered.png",
+      "entity/cow/cold_cow.png -> entity/cow/cow_cold.png",
+      "entity/cow/temperate_cow.png -> entity/cow/cow_temperate.png",
+      "entity/cow/warm_cow.png -> entity/cow/cow_warm.png",
+      "entity/cow/brown_mooshroom.png -> entity/cow/mooshroom_brown.png",
+      "entity/cow/red_mooshroom.png -> entity/cow/mooshroom_red.png",
+      "entity/fox/snow_fox.png -> entity/fox/fox_snow.png",
+      "entity/fox/snow_fox_sleep.png -> entity/fox/fox_snow_sleep.png",
+      "entity/frog/cold_frog.png -> entity/frog/frog_cold.png",
+      "entity/frog/temperate_frog.png -> entity/frog/frog_temperate.png",
+      "entity/frog/warm_frog.png -> entity/frog/frog_warm.png",
+      "entity/llama/brown.png -> entity/llama/llama_brown.png",
+      "entity/llama/creamy.png -> entity/llama/llama_creamy.png",
+      "entity/llama/gray.png -> entity/llama/llama_gray.png",
+      "entity/llama/spit.png -> entity/llama/llama_spit.png",
+      "entity/llama/white.png -> entity/llama/llama_white.png",
+      "entity/panda/aggressive_panda.png -> entity/panda/panda_aggressive.png",
+      "entity/panda/brown_panda.png -> entity/panda/panda_brown.png",
+      "entity/panda/lazy_panda.png -> entity/panda/panda_lazy.png",
+      "entity/panda/playful_panda.png -> entity/panda/panda_playful.png",
+      "entity/panda/weak_panda.png -> entity/panda/panda_weak.png",
+      "entity/panda/worried_panda.png -> entity/panda/panda_worried.png",
+      "entity/pig/cold_pig.png -> entity/pig/pig_cold.png",
+      "entity/pig/temperate_pig.png -> entity/pig/pig_temperate.png",
+      "entity/pig/warm_pig.png -> entity/pig/pig_warm.png",
+      "entity/projectiles/spectral.png -> entity/projectiles/arrow_spectral.png",
+      "entity/projectiles/tipped.png -> entity/projectiles/arrow_tipped.png",
+      "entity/turtle/big_sea_turtle.png -> entity/turtle/turtle.pngentity/armadillo.png",
+      "entity/banner_base.png -> entity/banner/banner_base.png",
+      "entity/bat.png -> entity/bat/bat.png",
+      "entity/beacon_beam.png -> entity/beacon/beacon_beam.png",
+      "entity/blaze.png -> entity/blaze/blaze.png",
+      "entity/dolphin.png -> entity/dolphin/dolphin.png",
+      "entity/enchanting_table_book.png -> entity/enchantment/enchanting_table_book.png",
+      "entity/end_gateway_beam.png -> entity/end_portal/end_gateway_beam.png",
+      "entity/end_portal.png -> entity/end_portal/end_portal.png",
+      "entity/endermite.png -> entity/endermite/endermite.png",
+      "entity/experience_orb.png -> entity/experience/experience_orb.png",
+      "entity/fishing_hook.png -> entity/fishing/fishing_hook.png",
+      "entity/guardian.png -> entity/guardian/guardian.png",
+      "entity/guardian_beam.png -> entity/guardian/guardian_beam.png",
+      "entity/guardian_elder.png -> entity/guardian/guardian_elder.png",
+      "entity/lead_knot.png -> entity/lead_knot/lead_knot.png",
+      "entity/minecart.png -> entity/minecart/minecart.png",
+      "entity/phantom.png -> entity/phantom/phantom.png",
+      "entity/phantom_eyes.png -> entity/phantom/phantom_eyes.png",
+      "entity/shield_base.png -> entity/shield/shield_base.png",
+      "entity/shield_base_nopattern.png -> entity/shield/shield_base_nopattern.png",
+      "entity/silverfish.png -> entity/silverfish/silverfish.png",
+      "entity/snow_golem.png -> entity/snow_golem/snow_golem.png",
+      "entity/spider_eyes.png -> entity/spider/spider_eyes.png",
+      "entity/trident.png -> entity/trident/trident.png",
+      "entity/trident_riptide.png -> entity/trident/trident_riptide.png",
+      "entity/wandering_trader.png -> entity/wandering_trader/wandering_trader.png",
+      "entity/witch.png -> entity/witch/witch.png"
+    ]
+  },
+  "data": {
+    "45": [
+      "structures -> structure",
+      "advancements -> advancement",
+      "recipes -> recipe",
+      "loot_tables -> loot_table",
+      "predicates -> predicate",
+      "item_modifiers -> item_modifier",
+      "functions -> function"
     ]
   }
 }
