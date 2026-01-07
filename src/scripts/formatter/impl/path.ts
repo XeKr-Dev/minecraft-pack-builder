@@ -52,7 +52,7 @@ export class PathFormatter {
                 if (version.datapack_version >= key) {
                     // 升级：from -> to
                     for (const data of value) {
-                        if (subPath === data.from || subPath.startsWith(data.from + "/")) {
+                        if (subPath === data.from || subPath.startsWith(data.from)) {
                             const newSubPath = subPath.replace(data.from, data.to)
                             pathSplit.splice(2, pathSplit.length - 2, ...newSubPath.split("/"))
                             break
@@ -61,7 +61,7 @@ export class PathFormatter {
                 } else {
                     // 降级：to -> from
                     for (const data of value) {
-                        if (subPath === data.to || subPath.startsWith(data.to + "/")) {
+                        if (subPath === data.to || subPath.startsWith(data.to)) {
                             const newSubPath = subPath.replace(data.to, data.from)
                             pathSplit.splice(2, pathSplit.length - 2, ...newSubPath.split("/"))
                             break

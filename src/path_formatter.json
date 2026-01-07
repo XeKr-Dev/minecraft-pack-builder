@@ -80,13 +80,13 @@
   },
   "data": {
     "45": [
-      "structures -> structure",
-      "advancements -> advancement",
-      "recipes -> recipe",
-      "loot_tables -> loot_table",
-      "predicates -> predicate",
-      "item_modifiers -> item_modifier",
-      "functions -> function"
+      "structures/ -> structure/",
+      "advancements/ -> advancement/",
+      "recipes/ -> recipe/",
+      "loot_tables/ -> loot_table/",
+      "predicates/ -> predicate/",
+      "item_modifiers/ -> item_modifier/",
+      "functions/ -> function/"
     ]
   }
 }
