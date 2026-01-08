@@ -66,7 +66,8 @@ interface Status {
   icon: string
   progress: boolean
   openFileSelector: boolean
-  files: File[]
+  files: File[],
+  cacheZip?: JSZip
 }
 
 const status: Status = reactive({
@@ -88,6 +89,7 @@ const status: Status = reactive({
   progress: false,
   openFileSelector: false,
   files: [],
+  cacheZip: undefined
 })
 
 function resetStatus() {
@@ -298,6 +300,11 @@ function build() {
     return
   }
   status.building = true
+  if (status.cacheZip) {
+    status.progress = true
+    zipHandler()
+    return;
+  }
   if (!status.config!.file_mode && !useProxy.value) {
     const mods: Map<string, number> = new Map()
     for (const key of status.selectedModules) {
@@ -329,7 +336,9 @@ function build() {
   GithubAPI.getRepoInfo(status.repo, useProxy.value).then(repoInfo => {
     GithubAPI.getRepoZip(status.repo, repoInfo["default_branch"], useProxy.value).then(async res => {
       console.log("getRepoZip", res)
-      await zipHandler(res, false)
+      status.progress = true
+      await loadZip(res, false)
+      await zipHandler()
     }).catch(e => {
       console.warn(e)
       status.openFileSelector = true
@@ -342,17 +351,23 @@ function build() {
 
 async function fileSelectorOK() {
   status.openFileSelector = false
-  await zipHandler(status.files[0])
+  status.progress = true
+  await loadZip(status.files[0])
+  await zipHandler()
 }
 
-async function zipHandler(file: any, base64: boolean = true) {
+async function loadZip(file: any, base64: boolean = true) {
+  status.cacheZip = await JSZip.loadAsync(file, {base64: base64})
+}
+
+async function zipHandler() {
   const mods: Map<string, number> = new Map()
   for (const key of status.selectedModules) {
     const value = status.modules.get(key)
     if (value == undefined) continue
     mods.set(key, value.weight)
   }
-  const zip = await JSZip.loadAsync(file, {base64: base64})
+  const zip = status.cacheZip!
   const neoZip = JSZip()
   for (let filesKey in zip.files) {
     const neoKey = filesKey.split("/").slice(1).join("/")
@@ -363,7 +378,6 @@ async function zipHandler(file: any, base64: boolean = true) {
       neoZip.file(neoKey, await zip.file(filesKey)?.async("uint8array"))
     }
   }
-  status.progress = true
   Builder.build(
       status.repo,
       status.config!,
@@ -389,6 +403,9 @@ async function zipHandler(file: any, base64: boolean = true) {
 
 function fileSelectorCancel() {
   status.openFileSelector = false
+  if (!status.building) {
+    status.progress = false
+  }
 }
 </script>
 
@@ -426,7 +443,7 @@ function fileSelectorCancel() {
             <a-form :model="{}" :auto-label-width="true">
               <a-form-item label="选择模块">
                 <a-select v-model="status.selectedModules" multiple @change="changeModules"
-                          :disabled="status.loading || status.building">
+                          :disabled="status.building || !status.loaded">
                   <div v-for="key in moduleKeys()" :key="key">
                     <a-tooltip v-if="!!status.modules.get(key)?.description"
                                :content="status.modules.get(key)?.description">
@@ -442,7 +459,7 @@ function fileSelectorCancel() {
               </a-form-item>
               <a-form-item label="选择合集">
                 <a-select v-model="status.selectedSet" @change="changeSet"
-                          :disabled="status.loading || status.building">
+                          :disabled="status.building || !status.loaded">
                   <div v-for="key in status.sets.keys()" :key="key">
                     <a-tooltip v-if="!!status.sets.get(key)?.description" :content="status.sets.get(key)?.description">
                       <a-option :value="key">
@@ -459,7 +476,7 @@ function fileSelectorCancel() {
                 <a-row>
                   <a-col :span="18">
                     <a-form-item label="选择版本">
-                      <a-select v-model="status.selectedMinecraft" :disabled="status.loading || status.building"
+                      <a-select v-model="status.selectedMinecraft" :disabled="status.building || !status.loaded"
                                 allow-search>
                         <div v-for="(value,key) in minecraft_version" :key="key">
                           <a-option v-show="status.showSnapshot || value.type == 'release'" :value="key" :label="key">
@@ -479,7 +496,7 @@ function fileSelectorCancel() {
                   </a-col>
                   <a-col :span="6">
                     <a-form-item style="margin-left: 20px" label="显示快照">
-                      <a-checkbox v-model="status.showSnapshot"/>
+                      <a-checkbox v-model="status.showSnapshot" :disabled="status.building || !status.loaded"/>
                     </a-form-item>
                   </a-col>
                 </a-row>
@@ -488,7 +505,7 @@ function fileSelectorCancel() {
                 <a-row>
                   <a-col :span="18">
                     <a-form-item label="选择类型">
-                      <a-select v-model="status.type" :disabled="status.loading || status.building">
+                      <a-select v-model="status.type" :disabled="status.building || !status.loaded">
                         <a-option value="all">全部</a-option>
                         <a-option value="resource">资源包</a-option>
                         <a-option value="data">数据包</a-option>
@@ -506,12 +523,13 @@ function fileSelectorCancel() {
                         </a-tooltip>
                         构建模组
                       </template>
-                      <a-checkbox v-model="status.buildToMod"/>
+                      <a-checkbox v-model="status.buildToMod" :disabled="status.building || !status.loaded"/>
                     </a-form-item>
                   </a-col>
                 </a-row>
               </div>
-              <a-button @click="build" :loading="status.building" :disabled="status.building || !status.loaded">构建</a-button>
+              <a-button @click="build" :loading="status.building" :disabled="status.building || !status.loaded">构建
+              </a-button>
             </a-form>
           </div>
           <a-divider/>

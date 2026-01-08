@@ -13,10 +13,11 @@ export class GithubAPI {
         "https://gh.zwnes.xyz/",
         "https://github.tmby.shop/"
     ];
-    public static readonly proxy: string = GithubAPI.proxies[Math.floor(Math.random() * GithubAPI.proxies.length)];
+    public static proxy: string = GithubAPI.proxies[Math.floor(Math.random() * GithubAPI.proxies.length)];
+    public static fileProxy?: string = undefined;
 
     static {
-        console.log(GithubAPI.proxy)
+        console.log("Selected proxy:", GithubAPI.proxy)
     }
 
     public static async getRepoInfo(repo: string, proxy: boolean = false) {
@@ -53,11 +54,15 @@ export class GithubAPI {
     }
 
     private static testProxyGet(url: string, test: number = -1) {
-        if (test >= GithubAPI.proxies.length) return Promise.reject("没有合适的代理服务器！")
+        if (test >= GithubAPI.proxies.length) return Promise.reject("No suitable proxy server!")
         const proxyUrl = test >= 0 ? GithubAPI.proxies[test] : GithubAPI.proxy
         const requestUrl = proxyUrl + url
         return new Promise<void>((resolve, reject) => {
             Request.get(requestUrl, {}, true, 'json', true).then((res) => {
+                if (GithubAPI.proxy != proxyUrl) {
+                    GithubAPI.proxy = proxyUrl;
+                    console.log("Selected proxy:", proxyUrl)
+                }
                 resolve(res)
             }).catch((_) => {
                 GithubAPI.testProxyGet(url, test + 1).then((res) => {
@@ -69,15 +74,19 @@ export class GithubAPI {
         })
     }
 
-    private static testGetRepoZip(repo: string, _branch: string = "", test: number = 0) {
-        if (test >= GithubAPI.proxies.length) return Promise.reject("没有合适的代理服务器！")
-        const proxyUrl = GithubAPI.proxies[test]
+    private static testGetRepoZip(repo: string, _branch: string = "", test: number = -1) {
+        if (test >= GithubAPI.proxies.length) return Promise.reject("No suitable proxy server!")
+        // if (!GithubAPI.fileProxy) test = 0;
+        const proxyUrl = test >= 0 ? GithubAPI.proxies[test] : GithubAPI.fileProxy || GithubAPI.proxy;
         const url = proxyUrl + (_branch
             ? `${import.meta.env.VITE_GITHUB_URL}/${repo}/archive/refs/heads/${_branch}.zip`
             : `${import.meta.env.VITE_GITHUB_API_URL}/repos/${repo}/zipball`)
-        console.log("Test get repo zip from " + url)
         return new Promise<void>((resolve, reject) => {
             Request.get(url, {}, true, 'arraybuffer', true).then((res) => {
+                if (GithubAPI.fileProxy != proxyUrl) {
+                    GithubAPI.fileProxy = proxyUrl;
+                    console.log("Selected file proxy:", proxyUrl)
+                }
                 resolve(res)
             }).catch((_) => {
                 GithubAPI.testGetRepoZip(repo, _branch, test + 1).then((res) => {
