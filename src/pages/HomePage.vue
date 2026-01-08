@@ -297,6 +297,7 @@ function build() {
     Message.error("请选择构建类型")
     return
   }
+  status.building = true
   if (!status.config!.file_mode && !useProxy.value) {
     const mods: Map<string, number> = new Map()
     for (const key of status.selectedModules) {
@@ -304,7 +305,6 @@ function build() {
       if (value == undefined) continue
       mods.set(key, value.weight)
     }
-    status.building = true
     status.progress = true
     Builder.build(
         status.repo,
@@ -326,9 +326,14 @@ function build() {
     })
     return;
   }
-  status.openFileSelector = true
   GithubAPI.getRepoInfo(status.repo, useProxy.value).then(repoInfo => {
-    GithubAPI.getRepoZip(status.repo, repoInfo["default_branch"], useProxy.value)
+    GithubAPI.getRepoZip(status.repo, repoInfo["default_branch"], useProxy.value).then(async res => {
+      console.log("getRepoZip", res)
+      await zipHandler(res, false)
+    }).catch(e => {
+      console.warn(e)
+      status.openFileSelector = true
+    })
   }).catch(e => {
     console.error(e)
     resetStatus()
@@ -337,13 +342,17 @@ function build() {
 
 async function fileSelectorOK() {
   status.openFileSelector = false
+  await zipHandler(status.files[0])
+}
+
+async function zipHandler(file: any, base64: boolean = true) {
   const mods: Map<string, number> = new Map()
   for (const key of status.selectedModules) {
     const value = status.modules.get(key)
     if (value == undefined) continue
     mods.set(key, value.weight)
   }
-  const zip = await JSZip.loadAsync(status.files[0], {base64: true})
+  const zip = await JSZip.loadAsync(file, {base64: base64})
   const neoZip = JSZip()
   for (let filesKey in zip.files) {
     const neoKey = filesKey.split("/").slice(1).join("/")
@@ -354,7 +363,6 @@ async function fileSelectorOK() {
       neoZip.file(neoKey, await zip.file(filesKey)?.async("uint8array"))
     }
   }
-  status.building = true
   status.progress = true
   Builder.build(
       status.repo,
@@ -503,7 +511,7 @@ function fileSelectorCancel() {
                   </a-col>
                 </a-row>
               </div>
-              <a-button @click="build" :loading="status.building">构建</a-button>
+              <a-button @click="build" :loading="status.building" :disabled="status.building || !status.loaded">构建</a-button>
             </a-form>
           </div>
           <a-divider/>

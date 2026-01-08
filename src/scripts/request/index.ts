@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, {type ResponseType} from 'axios'
 import {Message} from '@/scripts/message'
 
 export class Request {
@@ -17,17 +17,17 @@ export class Request {
         }
     }
 
-    public static async get(url: string, headers: any = {}, proxy: boolean = false): Promise<any> {
+    public static async get(url: string, headers: any = {}, proxy: boolean = false, responseType: ResponseType = 'json', silence: boolean = false): Promise<any> {
         headers = Request.getHeaders(headers, proxy)
         return new Promise<any>((resolve, reject) => {
             Request.INSTANCE
-                .get(url, {headers})
+                .get(url, {headers, responseType: responseType})
                 .then((res) => {
                     const data = Request.process(res)
                     if (data) resolve(data)
                 })
                 .catch((res) => {
-                    Request.reject(res)
+                    Request.reject(res, silence)
                     reject(res)
                 })
         })
@@ -95,13 +95,13 @@ export class Request {
         return response.data
     }
 
-    private static async reject(response: any) {
+    private static async reject(response: any, silence: boolean = false) {
         if (response.status == 403) {
-            Message.error("请求失败，可能是请求超过速率限制，请在右上角登录填写你的 GitHub Access Token")
+            if (!silence) Message.error("请求失败，可能是请求超过速率限制，请在右上角登录填写你的 GitHub Access Token")
         } else if (response.status == 404) {
-            Message.error("请求仓库失败，请检查仓库地址，目前仅支持填写完整 GitHub 仓库链接")
+            if (!silence) Message.error("请求仓库失败，请检查仓库地址，目前仅支持填写完整 GitHub 仓库链接")
         } else {
-            Message.error(response.data?.message || response.message)
+            if (!silence) Message.error(response.data?.message || response.message)
         }
     }
 }

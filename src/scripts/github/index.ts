@@ -9,6 +9,10 @@ export class GithubAPI {
     ];
     public static readonly proxy: string = GithubAPI.proxies[Math.floor(Math.random() * GithubAPI.proxies.length)];
 
+    static {
+        console.log(GithubAPI.proxy)
+    }
+
     public static async getRepoInfo(repo: string, proxy: boolean = false) {
         return Request.get((proxy ? GithubAPI.proxy : '') + `${import.meta.env.VITE_GITHUB_API_URL}/repos/${repo}`)
     }
@@ -22,10 +26,40 @@ export class GithubAPI {
     }
 
     public static getRepoZip(repo: string, _branch: string = "", proxy: boolean = false) {
-        if(!_branch) {
-            window.open((proxy ? GithubAPI.proxy : '') + `${import.meta.env.VITE_GITHUB_API_URL}/repos/${repo}/zipball`, "_blank")
-        } else {
-            window.open((proxy ? GithubAPI.proxy : '') + `${import.meta.env.VITE_GITHUB_URL}/${repo}/archive/refs/heads/${_branch}.zip`, "_blank")
+        const url = (proxy ? GithubAPI.proxy : '') + (_branch
+            ? `${import.meta.env.VITE_GITHUB_URL}/${repo}/archive/refs/heads/${_branch}.zip`
+            : `${import.meta.env.VITE_GITHUB_API_URL}/repos/${repo}/zipball`)
+        if (!proxy) {
+            window.open(url, "_blank")
+            return Promise.reject()
         }
+        return new Promise((resolve, reject) => {
+            GithubAPI.testGetRepoZip(repo, _branch).then((res) => {
+                resolve(res)
+            }).catch((e) => {
+                window.open(url, "_blank")
+                reject(e)
+            })
+        })
+    }
+
+    private static testGetRepoZip(repo: string, _branch: string = "", test: number = 0,) {
+        if (test >= GithubAPI.proxies.length) return Promise.reject("没有合适的代理服务器！")
+        const proxyUrl = GithubAPI.proxies[test]
+        const url = proxyUrl + (_branch
+            ? `${import.meta.env.VITE_GITHUB_URL}/${repo}/archive/refs/heads/${_branch}.zip`
+            : `${import.meta.env.VITE_GITHUB_API_URL}/repos/${repo}/zipball`)
+        console.log("Test get repo zip from " + url)
+        return new Promise<void>((resolve, reject) => {
+            Request.get(url, {}, true, 'arraybuffer', true).then((res) => {
+                resolve(res)
+            }).catch((_) => {
+                GithubAPI.testGetRepoZip(repo, _branch, test + 1).then((res) => {
+                    resolve(res)
+                }).catch((e) => {
+                    reject(e)
+                })
+            })
+        })
     }
 }
