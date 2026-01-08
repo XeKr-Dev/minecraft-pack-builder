@@ -111,6 +111,7 @@ function resetStatus() {
   status.progress = false
   status.openFileSelector = false
   status.files = []
+  status.cacheZip = undefined
 }
 
 function moduleKeys() {
