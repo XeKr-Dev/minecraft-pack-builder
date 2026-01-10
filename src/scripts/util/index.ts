@@ -1,3 +1,5 @@
+import {ref, watch} from "vue";
+
 export function utob64(str: string) {
     // noinspection JSDeprecatedSymbols
     return btoa(unescape(encodeURIComponent(str)))
@@ -69,4 +71,37 @@ export async function imageMagnify(b64: string) {
     sourceCanvas.remove()
     destCanvas.remove()
     return b64;
+}
+
+export class Proxy {
+    public static useProxy = ref(false)
+    public static readonly proxies: string[] = [
+        "https://gh.llkk.cc/",
+        "https://gh-proxy.top/",
+        "https://cdn.gh-proxy.org/",
+        "https://gh-proxy.org/",
+        "https://git.yylx.win/",
+        "https://gh-proxy.com/",
+        "https://github.chenc.dev/",
+        "https://fastgit.cc/",
+        "https://gh.zwnes.xyz/",
+        "https://github.tmby.shop/"
+    ];
+    public static proxy: string = Proxy.proxies[Math.floor(Math.random() * Proxy.proxies.length)];
+    public static fileProxy?: string = undefined;
+
+    static {
+        watch(Proxy.useProxy, (newUseProxy) => {
+            if (newUseProxy) {
+                localStorage.setItem('useProxy', newUseProxy.toString())
+            } else {
+                localStorage.removeItem('useProxy')
+            }
+        })
+    }
+
+    static {
+        Proxy.useProxy.value = localStorage.getItem('useProxy') === 'true'
+        console.log("Selected proxy:", Proxy.proxy)
+    }
 }

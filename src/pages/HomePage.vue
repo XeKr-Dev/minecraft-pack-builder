@@ -1,20 +1,16 @@
 <script setup lang="ts">
-import {onMounted, reactive, ref, watch} from "vue";
+import {reactive, ref} from "vue";
 import {Message} from "@/scripts/message";
 import MarkdownView from "@/components/MarkdownView.vue";
-import {GithubAPI} from "@/scripts/github";
-import {b64tou, imageMagnify} from "@/scripts/util";
-import type {ConfigJson, ModuleConfigJson, SetConfigJson} from "@/scripts/type";
+import {Proxy} from "@/scripts/util";
 import {Builder} from "@/scripts/builder";
-import {saveAs} from 'file-saver';
 import mc_version from '@/minecraft_version.json'
 import FakeProgress from "@/components/FakeProgress.vue";
 import Notice from "@/components/Notice.vue";
 import PageHeader from "@/components/PageHeader.vue";
 import FileSelectorDialog from "@/components/FileSelectorDialog.vue";
-import JSZip from "jszip";
+import {Project} from "@/scripts/project/project.ts";
 
-const BASE_64_PNG_PREFIX = 'data:image/png;base64, '
 const minecraft_version: {
   [key: string]: {
     type: "snapshot" | "release",
@@ -34,30 +30,15 @@ function getUrl() {
 }
 
 const repoUrl = ref(`https://github.com/${getUrl()}`)
-const useProxy = ref(false)
-
-watch(useProxy, (newUseProxy) => {
-  if (newUseProxy) {
-    localStorage.setItem('useProxy', newUseProxy.toString())
-  } else {
-    localStorage.removeItem('useProxy')
-  }
-})
-
-onMounted(() => {
-  useProxy.value = localStorage.getItem('useProxy') === 'true'
-})
+const useProxy = Proxy.useProxy
 
 interface Status {
+  repo: string
+  project?: Project
   loading: boolean
   loaded: boolean
-  repo: string
-  readme: string
-  config: ConfigJson | undefined
-  modules: Map<string, ModuleConfigJson>
   selectedModules: string[]
-  sets: Map<string, SetConfigJson>
-  selectedSet: string | undefined
+  selectedSet?: string
   selectedMinecraft: string
   showSnapshot: boolean
   type: "all" | "resource" | "data"
@@ -66,19 +47,15 @@ interface Status {
   icon: string
   progress: boolean
   openFileSelector: boolean
-  files: File[],
-  cacheZip?: JSZip
+  files: File[]
 }
 
 const status: Status = reactive({
+  repo: "",
+  project: undefined,
   loading: false,
   loaded: false,
-  repo: "",
-  readme: "",
-  config: undefined,
-  modules: new Map(),
   selectedModules: [],
-  sets: new Map(),
   selectedSet: undefined,
   selectedMinecraft: "1.21.11",
   showSnapshot: false,
@@ -88,19 +65,15 @@ const status: Status = reactive({
   icon: "",
   progress: false,
   openFileSelector: false,
-  files: [],
-  cacheZip: undefined
+  files: []
 })
 
 function resetStatus() {
+  status.project = undefined
   status.loading = false
   status.loaded = false
   status.repo = ""
-  status.readme = ""
-  status.config = undefined
-  status.modules = new Map()
   status.selectedModules = []
-  status.sets = new Map()
   status.selectedSet = undefined
   status.selectedMinecraft = "1.21.11"
   status.showSnapshot = false
@@ -111,11 +84,6 @@ function resetStatus() {
   status.progress = false
   status.openFileSelector = false
   status.files = []
-  status.cacheZip = undefined
-}
-
-function moduleKeys() {
-  return Array.from(status.modules.keys()).sort((a, b) => a.localeCompare(b))
 }
 
 function loadRepo() {
@@ -132,36 +100,14 @@ function loadRepo() {
       return
     }
     status.repo = `${urlSplit[1]}/${urlSplit[2]}`
+    status.project = reactive(new Project(status.repo))
     const urlPrefix = window.location.href.split('/#/')[0]
     history.pushState(null, '', `${urlPrefix}#/${status.repo}`)
-    const promises: Promise<any>[] = []
-    GithubAPI.getRepoContents(status.repo, "config.json", useProxy.value).then(configData => {
-      status.config = JSON.parse(b64tou(configData.content)) as ConfigJson
-      if (status.config.suggested_version) status.selectedMinecraft = status.config.suggested_version
-      if (status.config.type) status.type = status.config.type
-      if (status.config.icon) {
-        GithubAPI.getRepoContents(status.repo, status.config.icon, useProxy.value).then(iconData => {
-          imageMagnify(`${BASE_64_PNG_PREFIX}${iconData.content}`).then(b64 => {
-            status.icon = b64
-          })
-        })
-      }
-      promises.push(loadModules())
-      promises.push(loadSets())
-      Promise.all(promises).then(() => {
-        status.loaded = true
-        status.loading = false
-        Message.success("加载成功")
-      })
+    status.project.loadRepo().then(() => {
+      status.loaded = true
+      status.loading = false
+      Message.success("加载成功")
     }).catch(e => {
-      Message.error("无法加载配置文件")
-      console.error(e)
-      resetStatus()
-    })
-    GithubAPI.getRepoReadme(status.repo, useProxy.value).then(readmeData => {
-      status.readme = b64tou(readmeData.content)
-    }).catch(e => {
-      Message.error("无法加载 README.md")
       console.error(e)
       resetStatus()
     })
@@ -169,66 +115,6 @@ function loadRepo() {
     console.error(e)
     resetStatus()
   }
-}
-
-function loadModules(): Promise<void> {
-  const basePath = Builder.getBasePath(status.config!)
-  return new Promise(resolve => {
-    GithubAPI.getRepoContents(status.repo, basePath, useProxy.value).then(data => {
-      const promises: Promise<any>[] = []
-      for (const path of data) {
-        let cont = false;
-        if (status.config!.version_modules) {
-          for (let key in status.config!.version_modules) {
-            // const versionModule = status.config.version_modules[key]
-            if (key == path.name) {
-              cont = true
-              break
-            }
-          }
-        }
-        if (cont) continue;
-        if (path.name == status.config!.main_module) {
-          continue
-        }
-        const promise = GithubAPI.getRepoContents(status.repo, path.path + "/module.config.json", useProxy.value).then(data => {
-          status.modules.set(path.path as string, JSON.parse(b64tou(data.content)) as ModuleConfigJson)
-        })
-        promises.push(promise)
-      }
-      Promise.all(promises).then(() => resolve())
-    }).catch(e => {
-      console.error(e)
-      resetStatus()
-    })
-  })
-}
-
-async function loadSets(): Promise<void> {
-  if (!status.config!.sets_path) return;
-  const setsPath = status.config!.sets_path
-  const data = await GithubAPI.getRepoContents(status.repo, setsPath, useProxy.value)
-  for (const path of data) {
-    const setConfigData = await GithubAPI.getRepoContents(status.repo, path.path, useProxy.value)
-    const configJson = JSON.parse(b64tou(setConfigData.content)) as SetConfigJson
-    status.sets.set(configJson.set_name, configJson)
-  }
-  return new Promise(resolve => {
-    GithubAPI.getRepoContents(status.repo, setsPath, useProxy.value).then(data => {
-      const promises: Promise<any>[] = []
-      for (const path of data) {
-        const promise = GithubAPI.getRepoContents(status.repo, path.path, useProxy.value).then(setConfigData => {
-          const configJson = JSON.parse(b64tou(setConfigData.content)) as SetConfigJson
-          status.sets.set(configJson.set_name, configJson)
-        })
-        promises.push(promise)
-      }
-      Promise.all(promises).then(() => resolve())
-    }).catch(e => {
-      console.error(e)
-      resetStatus()
-    })
-  })
 }
 
 function changeModules(e: string[]) {
@@ -240,22 +126,22 @@ function changeModules(e: string[]) {
 
 function changeSet() {
   if (status.selectedSet == undefined) return
-  status.selectedModules = status.sets.get(status.selectedSet)?.modules.map(module => {
-    const basePath = Builder.getBasePath(status.config!)
+  status.selectedModules = status.project?.sets.get(status.selectedSet)?.modules.map(module => {
+    const basePath = Builder.getBasePath(status.project?.config!)
     return `${basePath}/${module}`
   }) || []
 }
 
 function checkModuleDisabled(key: string) {
-  const basePath = Builder.getBasePath(status.config!)
-  const self = status.modules.get(key)
+  const basePath = Builder.getBasePath(status.project?.config!)
+  const self = status.project?.modules.get(key)
   if (self == undefined) return true
   for (const subKey of status.selectedModules) {
     for (let breakKey of self.breaks) {
       breakKey = `${basePath}/${breakKey}`
       if (subKey == breakKey) return true
     }
-    const sub = status.modules.get(subKey)
+    const sub = status.project?.modules.get(subKey)
     if (sub == undefined) continue
     for (const breakKey of sub.breaks) {
       if (`${basePath}/${breakKey}` == key) return true
@@ -272,8 +158,8 @@ function checkModuleDisabled(key: string) {
 }
 
 function selectWithBindings(key: string) {
-  const basePath = Builder.getBasePath(status.config!)
-  const self = status.modules.get(key)
+  const basePath = Builder.getBasePath(status.project?.config!)
+  const self = status.project?.modules.get(key)
   if (self == undefined) return;
   if (!status.selectedModules.includes(key)) {
     status.selectedModules.push(key)
@@ -296,106 +182,36 @@ function build() {
     Message.error("请选择 Minecraft 版本")
     return
   }
-  if (!status.type) {
-    Message.error("请选择构建类型")
-    return
-  }
   status.building = true
-  if (status.cacheZip) {
-    status.progress = true
-    zipHandler()
-    return;
-  }
-  if (!status.config!.file_mode && !useProxy.value) {
-    const mods: Map<string, number> = new Map()
-    for (const key of status.selectedModules) {
-      const value = status.modules.get(key)
-      if (value == undefined) continue
-      mods.set(key, value.weight)
-    }
-    status.progress = true
-    Builder.build(
-        status.repo,
-        status.config!,
-        mods,
-        status.selectedMinecraft,
-        status.type,
-        status.buildToMod,
-        "online",
-        useProxy.value
-    ).then((blob) => {
-      status.building = false
-      Message.success("构建成功")
-      saveAs(blob, `${status.config!.pack_name}-${status.config!.version}-${status.type}-mc${status.selectedMinecraft}.${status.buildToMod ? "jar" : "zip"}`)
-    }).catch(e => {
-      status.building = false
-      Message.error("构建失败")
-      console.error(e)
-    })
-    return;
-  }
-  GithubAPI.getRepoInfo(status.repo, useProxy.value).then(repoInfo => {
-    GithubAPI.getRepoZip(status.repo, repoInfo["default_branch"], useProxy.value).then(async res => {
-      console.log("getRepoZip", res)
-      status.progress = true
-      await loadZip(res, false)
-      await zipHandler()
-    }).catch(e => {
+  status.progress = true
+  status.project?.build(status.type, status.selectedModules, status.selectedMinecraft, status.buildToMod).then(() => {
+    status.building = false
+    Message.success("构建成功")
+  }).catch(e => {
+    if (e == "should-open-file-selector") {
       console.warn(e)
       status.openFileSelector = true
-    })
-  }).catch(e => {
+      return
+    }
+    status.building = false
+    Message.error("构建失败")
     console.error(e)
-    resetStatus()
   })
 }
 
 async function fileSelectorOK() {
   status.openFileSelector = false
   status.progress = true
-  await loadZip(status.files[0])
-  await zipHandler()
-}
-
-async function loadZip(file: any, base64: boolean = true) {
-  status.cacheZip = await JSZip.loadAsync(file, {base64: base64})
-}
-
-async function zipHandler() {
-  const mods: Map<string, number> = new Map()
-  for (const key of status.selectedModules) {
-    const value = status.modules.get(key)
-    if (value == undefined) continue
-    mods.set(key, value.weight)
-  }
-  const zip = status.cacheZip!
-  const neoZip = JSZip()
-  for (let filesKey in zip.files) {
-    const neoKey = filesKey.split("/").slice(1).join("/")
-    if (neoKey === "" || neoKey === "/") continue
-    if (filesKey.endsWith("/")) {
-      neoZip.folder(neoKey)
-    } else {
-      neoZip.file(neoKey, await zip.file(filesKey)?.async("uint8array"))
-    }
-  }
-  Builder.build(
-      status.repo,
-      status.config!,
-      mods,
-      status.selectedMinecraft,
-      status.type,
-      status.buildToMod,
-      "file",
-      useProxy.value,
-      neoZip
-  ).then((blob) => {
-    status.files = []
-    status.building = false
-    Message.success("构建成功")
-    saveAs(blob, `${status.config!.pack_name}-${status.config!.version}-${status.type}-mc${status.selectedMinecraft}.${status.buildToMod ? "jar" : "zip"}`)
+  status.project?.loadZip(status.files[0]).then(() => {
+    status.project?.zipHandler(status.type, status.selectedModules, status.selectedMinecraft, status.buildToMod).then(() => {
+      status.building = false
+      Message.success("构建成功")
+    }).catch(e => {
+      status.building = false
+      Message.error("构建失败")
+      console.error(e)
+    })
   }).catch(e => {
-    status.files = []
     status.building = false
     Message.error("构建失败")
     console.error(e)
@@ -445,15 +261,15 @@ function fileSelectorCancel() {
               <a-form-item label="选择模块">
                 <a-select v-model="status.selectedModules" multiple @change="changeModules"
                           :disabled="status.building || !status.loaded">
-                  <div v-for="key in moduleKeys()" :key="key">
-                    <a-tooltip v-if="!!status.modules.get(key)?.description"
-                               :content="status.modules.get(key)?.description">
+                  <div v-for="key in status.project?.moduleKeys()" :key="key">
+                    <a-tooltip v-if="!!status.project?.modules.get(key)?.description"
+                               :content="status.project?.modules.get(key)?.description">
                       <a-option :value="key" :disabled="checkModuleDisabled(key)">
-                        {{ status.modules.get(key)?.module_name }}
+                        {{ status.project?.modules.get(key)?.module_name }}
                       </a-option>
                     </a-tooltip>
                     <a-option v-else :value="key" :disabled="checkModuleDisabled(key)">
-                      {{ status.modules.get(key)?.module_name }}
+                      {{ status.project?.modules.get(key)?.module_name }}
                     </a-option>
                   </div>
                 </a-select>
@@ -461,14 +277,15 @@ function fileSelectorCancel() {
               <a-form-item label="选择合集">
                 <a-select v-model="status.selectedSet" @change="changeSet"
                           :disabled="status.building || !status.loaded">
-                  <div v-for="key in status.sets.keys()" :key="key">
-                    <a-tooltip v-if="!!status.sets.get(key)?.description" :content="status.sets.get(key)?.description">
+                  <div v-for="key in status.project?.sets.keys()" :key="key">
+                    <a-tooltip v-if="!!status.project?.sets.get(key)?.description"
+                               :content="status.project?.sets.get(key)?.description">
                       <a-option :value="key">
-                        {{ status.sets.get(key)?.set_name }}
+                        {{ status.project?.sets.get(key)?.set_name }}
                       </a-option>
                     </a-tooltip>
                     <a-option v-else :value="key">
-                      {{ status.sets.get(key)?.set_name }}
+                      {{ status.project?.sets.get(key)?.set_name }}
                     </a-option>
                   </div>
                 </a-select>
@@ -534,7 +351,7 @@ function fileSelectorCancel() {
             </a-form>
           </div>
           <a-divider/>
-          <markdown-view v-model="status.readme"/>
+          <markdown-view v-if="status.loaded" v-model="status.project.readme"/>
         </a-card>
       </div>
     </div>
