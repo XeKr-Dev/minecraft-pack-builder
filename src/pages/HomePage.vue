@@ -351,7 +351,7 @@ function fileSelectorCancel() {
             </a-form>
           </div>
           <a-divider/>
-          <markdown-view v-if="status.loaded" v-model="status.project.readme"/>
+          <markdown-view v-if="status.loaded" v-model="status.project!.readme"/>
         </a-card>
       </div>
     </div>

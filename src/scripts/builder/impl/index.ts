@@ -337,12 +337,13 @@ authors = "${this.config.author}"
                     }
                 }
                 const versionModuleMap: {
-                    [key: string]: {
+                    [key: string]: Array<{
                         path: string
                         module: string
                         version: string
+                        order: number
                         files?: FileOrTree
-                    }
+                    }>
                 } = {}
                 if (this.config.version_modules) {
                     const versionModuleKeys = Object.keys(this.config.version_modules).filter(key => {
@@ -353,25 +354,40 @@ authors = "${this.config.author}"
                         }
                         return false
                     })
-                    for (const versionModuleKey of versionModuleKeys) {
+                    for (let i = 0; i < versionModuleKeys.length; i++) {
+                        const versionModuleKey = versionModuleKeys[i]
                         const versionModule: VersionModule = this.config.version_modules[versionModuleKey]
                         const moduleMCVersion = mcVersions[versionModule.version];
                         if (!moduleMCVersion) continue
                         if (Version.compareMC(this.version, versionModule.version, !!this.config.version_reverse) < 0) continue
                         if (!!versionModule.strict && Version.compareMC(this.version, versionModule.version, !!this.config.version_reverse) !== 0) continue
                         const targetKey = versionModule.target || this.config.main_module
-                        const target = versionModuleMap[targetKey]
-                        if (target && Version.compareMC(target.version, versionModule.version) >= 0) continue
-                        versionModuleMap[targetKey] = {
+                        if (!versionModuleMap[targetKey]) {
+                            versionModuleMap[targetKey] = []
+                        }
+                        versionModuleMap[targetKey].push({
                             path: `${basePath}/${versionModuleKey}`,
                             module: versionModuleKey,
-                            version: versionModule.version
-                        }
+                            version: versionModule.version,
+                            order: i
+                        })
                     }
-                    for (const versionModuleKey in versionModuleMap) {
-                        const versionModule = versionModuleMap[versionModuleKey]
-                        const promise = this.getFileTree(versionModule.path, proxy).then(res => versionModule.files = res)
-                        promises.push(promise)
+                    // 对每个目标的版本模块进行排序：由远及近，版本相同则按定义顺序
+                    for (const targetKey in versionModuleMap) {
+                        versionModuleMap[targetKey].sort((a, b) => {
+                            const versionCompare = Version.compareMC(a.version, b.version)
+                            if (versionCompare !== 0) {
+                                return versionCompare // 由远及近：版本远的排在前面
+                            }
+                            return a.order - b.order // 版本相同时按定义顺序
+                        })
+                    }
+                    // 加载所有版本模块的文件树
+                    for (const targetKey in versionModuleMap) {
+                        for (const versionModule of versionModuleMap[targetKey]) {
+                            const promise = this.getFileTree(versionModule.path, proxy).then(res => versionModule.files = res)
+                            promises.push(promise)
+                        }
                     }
                 }
                 if (this.config.icon) {
@@ -382,17 +398,24 @@ authors = "${this.config.author}"
                     promises.push(promise)
                 }
                 Promise.all(promises).then(() => {
+                    // 应用主模块的版本模块（由远及近覆盖）
                     if (versionModuleMap[this.config.main_module]) {
-                        const versionModule = versionModuleMap[this.config.main_module]
-                        if (versionModule.files) {
-                            pack = this.mergeFileOrTree(pack, versionModule.files)
+                        for (const versionModule of versionModuleMap[this.config.main_module]) {
+                            if (versionModule.files) {
+                                pack = this.mergeFileOrTree(pack, versionModule.files)
+                            }
                         }
                     }
                     for (let module of moduleList) {
                         pack = this.mergeFileOrTree(pack, module.files!!)
-                        const versionModule = versionModuleMap[module.path.substring(basePath.length + 1)]
-                        if (versionModule && versionModule.files) {
-                            pack = this.mergeFileOrTree(pack, versionModule.files)
+                        // 应用该模块的版本模块（由远及近覆盖）
+                        const versionModules = versionModuleMap[module.path.substring(basePath.length + 1)]
+                        if (versionModules) {
+                            for (const versionModule of versionModules) {
+                                if (versionModule.files) {
+                                    pack = this.mergeFileOrTree(pack, versionModule.files)
+                                }
+                            }
                         }
                     }
                     const zip: JSZip = new JSZip()
