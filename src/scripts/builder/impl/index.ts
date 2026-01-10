@@ -375,7 +375,7 @@ authors = "${this.config.author}"
                     // 对每个目标的版本模块进行排序：由远及近，版本相同则按定义顺序
                     for (const targetKey in versionModuleMap) {
                         versionModuleMap[targetKey].sort((a, b) => {
-                            const versionCompare = Version.compareMC(a.version, b.version)
+                            const versionCompare = Version.compareMC(a.version, b.version, !!this.config.version_reverse)
                             if (versionCompare !== 0) {
                                 return versionCompare // 由远及近：版本远的排在前面
                             }
