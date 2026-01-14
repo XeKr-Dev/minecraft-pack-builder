@@ -44,7 +44,6 @@ interface Status {
   type: "all" | "resource" | "data"
   buildToMod: boolean
   building: boolean
-  icon: string
   progress: boolean
   openFileSelector: boolean
   files: File[]
@@ -62,7 +61,6 @@ const status: Status = reactive({
   type: "all",
   buildToMod: false,
   building: false,
-  icon: "",
   progress: false,
   openFileSelector: false,
   files: []
@@ -80,7 +78,6 @@ function resetStatus() {
   status.type = "all"
   status.buildToMod = false
   status.building = false
-  status.icon = ""
   status.progress = false
   status.openFileSelector = false
   status.files = []
@@ -256,7 +253,7 @@ function fileSelectorCancel() {
             <fake-progress v-if="status.progress" v-model="status.building"/>
           </div>
           <div style="display: flex">
-            <a-image :src="status.icon" style="margin: 10px;image-rendering: crisp-edges" :width="200" :height="200"/>
+            <a-image :src="status.project?.icon" style="margin: 10px;image-rendering: crisp-edges" :width="200" :height="200"/>
             <a-form :model="{}" :auto-label-width="true">
               <a-form-item label="选择模块">
                 <a-select v-model="status.selectedModules" multiple @change="changeModules"
