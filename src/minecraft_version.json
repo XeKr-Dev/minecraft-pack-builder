@@ -1,4 +1,49 @@
 {
+  "26.1-pre-3": {
+    "type": "snapshot",
+    "datapack_version": 101.1,
+    "resources_version": 84
+  },
+  "26.1-pre-1": {
+    "type": "snapshot",
+    "datapack_version": 101,
+    "resources_version": 84
+  },
+  "26.1-snapshot-11": {
+    "type": "snapshot",
+    "datapack_version": 100,
+    "resources_version": 83
+  },
+  "26.1-snapshot-10": {
+    "type": "snapshot",
+    "datapack_version": 99.2,
+    "resources_version": 82
+  },
+  "26.1-snapshot-8": {
+    "type": "snapshot",
+    "datapack_version": 99.2,
+    "resources_version": 81.1
+  },
+  "26.1-snapshot-7": {
+    "type": "snapshot",
+    "datapack_version": 99.1,
+    "resources_version": 81
+  },
+  "26.1-snapshot-6": {
+    "type": "snapshot",
+    "datapack_version": 99,
+    "resources_version": 80
+  },
+  "26.1-snapshot-5": {
+    "type": "snapshot",
+    "datapack_version": 98,
+    "resources_version": 79
+  },
+  "26.1-snapshot-4": {
+    "type": "snapshot",
+    "datapack_version": 97.1,
+    "resources_version": 78.1
+  },
   "26.1-snapshot-3": {
     "type": "snapshot",
     "datapack_version": 97,

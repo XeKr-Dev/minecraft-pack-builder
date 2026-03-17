@@ -1,4 +1,39 @@
 {
+  "26.1-pre-3": {
+    "datapack_version": 101.1
+  },
+  "26.1-pre-1": {
+    "datapack_version": 101,
+    "resources_version": 84
+  },
+  "26.1-snapshot-11": {
+    "datapack_version": 100,
+    "resources_version": 83
+  },
+  "26.1-snapshot-10": {
+    "datapack_version": 99.2,
+    "resources_version": 82
+  },
+  "26.1-snapshot-8": {
+    "datapack_version": 99.2,
+    "resources_version": 81.1
+  },
+  "26.1-snapshot-7": {
+    "datapack_version": 99.1,
+    "resources_version": 81
+  },
+  "26.1-snapshot-6": {
+    "datapack_version": 99,
+    "resources_version": 80
+  },
+  "26.1-snapshot-5": {
+    "datapack_version": 98,
+    "resources_version": 79
+  },
+  "26.1-snapshot-4": {
+    "datapack_version": 97.1,
+    "resources_version": 78.1
+  },
   "26.1-snapshot-3": {
     "datapack_version": 97.0,
     "resources_version": 78.0
