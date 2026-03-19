@@ -1,7 +1,17 @@
 {
+  "26.1-rc-1": {
+    "type": "snapshot",
+    "datapack_version": 101.1,
+    "resources_version": 84
+  },
   "26.1-pre-3": {
     "type": "snapshot",
     "datapack_version": 101.1,
+    "resources_version": 84
+  },
+  "26.1-pre-2": {
+    "type": "snapshot",
+    "datapack_version": 101,
     "resources_version": 84
   },
   "26.1-pre-1": {
