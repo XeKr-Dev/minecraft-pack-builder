@@ -181,11 +181,10 @@ export class Project {
                         self.zipHandler(type, selectedModules, selectedMinecraft, buildToMod).then(() => resolve())
                     })
                 }).catch(e => {
-                    reject(e)
+                    reject("should-open-file-selector")
                     console.warn(e)
                 })
             }).catch(e => {
-                reject('should-open-file-selector')
                 console.error(e)
                 self.resetStatus()
             })
