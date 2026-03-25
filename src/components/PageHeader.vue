@@ -158,4 +158,10 @@ function copyLink() {
     margin-right: 0;
   }
 }
+
+@media (max-width: 424px) {
+  .header-text {
+    display: none;
+  }
+}
 </style>

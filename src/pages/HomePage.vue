@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {reactive, ref} from "vue";
+import {onBeforeUnmount, onMounted, reactive, ref} from "vue";
 import {Message} from "@/scripts/message";
 import MarkdownView from "@/components/MarkdownView.vue";
 import {Proxy} from "@/scripts/util";
@@ -31,6 +31,25 @@ function getUrl() {
 
 const repoUrl = ref(`https://github.com/${getUrl()}`)
 const useProxy = Proxy.useProxy
+const isUltraNarrow = ref(false)
+let ultraNarrowMediaQuery: MediaQueryList | undefined
+
+function syncUltraNarrowLayout() {
+  isUltraNarrow.value = ultraNarrowMediaQuery?.matches ?? false
+}
+
+function mounted() {
+  ultraNarrowMediaQuery = window.matchMedia('(max-width: 387px)')
+  syncUltraNarrowLayout()
+  ultraNarrowMediaQuery.addEventListener('change', syncUltraNarrowLayout)
+}
+
+function unmounted() {
+  ultraNarrowMediaQuery?.removeEventListener('change', syncUltraNarrowLayout)
+}
+
+onMounted(mounted)
+onBeforeUnmount(unmounted)
 
 interface Status {
   repo: string
@@ -234,12 +253,15 @@ function fileSelectorCancel() {
   <a-scrollbar class="page-scroll">
     <div class="repo-input">
       <a-form :model="{}">
-        <a-form-item label="仓库地址">
+        <a-form-item class="repo-form-item" :label="isUltraNarrow ? undefined : '仓库地址'"
+                     :hide-label="isUltraNarrow" label-col-flex="4.5em">
           <div class="repo-form-row">
             <a-input v-model="repoUrl" class="repo-url-input"/>
-            <a-button class="btn" @click="loadRepo" :loading="status.loading" :disabled="status.building">加载</a-button>
-            <a-checkbox v-model="useProxy"/>
-            <div class="proxy-label">使用代理</div>
+            <a-button class="btn load-btn" @click="loadRepo" :loading="status.loading" :disabled="status.building">加载</a-button>
+            <div class="proxy-option">
+              <a-checkbox v-model="useProxy"/>
+              <div class="proxy-label">使用代理</div>
+            </div>
           </div>
         </a-form-item>
       </a-form>
@@ -393,6 +415,7 @@ root {
   width: 100%;
 }
 
+
 .repo-url-input {
   flex: 1;
   min-width: 0;
@@ -401,6 +424,11 @@ root {
 .proxy-label {
   white-space: nowrap;
   margin-left: 8px;
+}
+
+.proxy-option {
+  display: flex;
+  align-items: center;
 }
 
 .container {
@@ -530,6 +558,22 @@ root {
 
   .right-option {
     margin-left: 0;
+  }
+}
+
+@media (max-width: 387px) {
+  .repo-url-input {
+    flex-basis: 100%;
+  }
+
+  .load-btn {
+    flex-basis: 100%;
+    margin: 0 auto;
+  }
+
+  .proxy-option {
+    flex-basis: 100%;
+    justify-content: center;
   }
 }
 </style>
