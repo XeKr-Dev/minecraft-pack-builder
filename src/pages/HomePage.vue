@@ -256,7 +256,7 @@ function fileSelectorCancel() {
         <a-form-item class="repo-form-item" :label="isUltraNarrow ? undefined : '仓库地址'"
                      :hide-label="isUltraNarrow" label-col-flex="4.5em">
           <div class="repo-form-row">
-            <a-input v-model="repoUrl" class="repo-url-input"/>
+            <a-input v-model="repoUrl" class="repo-url-input" placeholder="仓库地址"/>
             <a-button class="btn load-btn" @click="loadRepo" :loading="status.loading" :disabled="status.building">加载</a-button>
             <div class="proxy-option">
               <a-checkbox v-model="useProxy"/>
