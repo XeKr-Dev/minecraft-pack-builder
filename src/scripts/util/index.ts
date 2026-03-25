@@ -85,7 +85,19 @@ export class Proxy {
         "https://github.chenc.dev/",
         "https://fastgit.cc/",
         "https://gh.zwnes.xyz/",
-        "https://github.tmby.shop/"
+        "https://github.tmby.shop/",
+        'https://gh.noki.icu/',
+        'https://gh.dpik.top/',
+        'https://tvv.tw/',
+        'https://gh.inkchills.cn/',
+        'https://gh.felicity.ac.cn/',
+        'https://github.dpik.top/',
+        'https://gh.927223.xyz/',
+        'https://cdn.akaere.online/',
+        'https://jiashu.1win.eu.org/',
+        'https://github.tbedu.top/',
+        'https://gh.fhjhy.top/',
+        'https://gh.sixyin.com/'
     ];
     public static proxy: string = Proxy.proxies[Math.floor(Math.random() * Proxy.proxies.length)];
     public static fileProxy?: string = undefined;
