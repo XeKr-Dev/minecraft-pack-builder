@@ -44,9 +44,9 @@
 
 <style scoped>
 .notice-content {
-  min-width: 300px;
-  width: calc(100vw - 1880px);
-  margin: 20px;
+  width: 320px;
+  max-width: calc(100% - 40px);
+  margin: 20px 0 20px 20px;
   display: inline-block;
   line-height: 2;
 }
@@ -55,5 +55,20 @@
   background-color: var(--color-bg-5);
   padding: 0.2em 0.4em;
   border-radius: 4px;
+}
+
+@media (max-width: 1200px) {
+  .notice-content {
+    width: auto;
+    margin: 0 20px 0 20px;
+    display: block;
+  }
+}
+
+@media (max-width: 768px) {
+  .notice-content {
+    margin: 0;
+    max-width: none;
+  }
 }
 </style>

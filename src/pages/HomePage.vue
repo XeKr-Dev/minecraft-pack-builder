@@ -231,30 +231,34 @@ function fileSelectorCancel() {
       @cancel="fileSelectorCancel"
   />
   <page-header v-model="status.repo"/>
-  <a-scrollbar style="height: calc(100vh - 80px);overflow: auto">
+  <a-scrollbar class="page-scroll">
     <div class="repo-input">
       <a-form :model="{}">
         <a-form-item label="仓库地址">
-          <a-input v-model="repoUrl"/>
-          <a-button class="btn" @click="loadRepo" :loading="status.loading" :disabled="status.building">加载</a-button>
-          <a-checkbox v-model="useProxy"/>
-          <div style="white-space: nowrap; margin-left: 8px">使用代理</div>
+          <div class="repo-form-row">
+            <a-input v-model="repoUrl" class="repo-url-input"/>
+            <a-button class="btn" @click="loadRepo" :loading="status.loading" :disabled="status.building">加载</a-button>
+            <a-checkbox v-model="useProxy"/>
+            <div class="proxy-label">使用代理</div>
+          </div>
         </a-form-item>
       </a-form>
     </div>
     <div class="container">
-      <notice/>
+      <div class="notice-area">
+        <notice/>
+      </div>
       <div class="page-content">
         <a-card>
           <template v-if="status.repo !== ''" #title>
             {{ status.repo }}
           </template>
-          <div style="padding: 15px; height: 10px">
+          <div class="progress-wrap">
             <fake-progress v-if="status.progress" v-model="status.building"/>
           </div>
-          <div style="display: flex">
-            <a-image :src="status.project?.icon" style="margin: 10px;image-rendering: crisp-edges" :width="200" :height="200"/>
-            <a-form :model="{}" :auto-label-width="true">
+          <div class="project-config">
+            <a-image :src="status.project?.icon" class="project-icon"/>
+            <a-form :model="{}" :auto-label-width="true" class="config-form">
               <a-form-item label="选择模块">
                 <a-select v-model="status.selectedModules" multiple @change="changeModules"
                           :disabled="status.building || !status.loaded">
@@ -288,20 +292,20 @@ function fileSelectorCancel() {
                 </a-select>
               </a-form-item>
               <div>
-                <a-row>
-                  <a-col :span="18">
+                <a-row :gutter="12">
+                  <a-col :xs="24" :sm="18">
                     <a-form-item label="选择版本">
                       <a-select v-model="status.selectedMinecraft" :disabled="status.building || !status.loaded"
                                 allow-search>
                         <div v-for="(value,key) in minecraft_version" :key="key">
                           <a-option v-show="status.showSnapshot || value.type == 'release'" :value="key" :label="key">
-                            <a-tag class="page-tag" style="width: 150px">
+                            <a-tag class="page-tag version-tag">
                               {{ key }}
                             </a-tag>
-                            <a-tag class="page-tag" style="width: 90px" color="red">
+                            <a-tag class="page-tag pack-tag" color="red">
                               资源包：{{ value.resources_version }}
                             </a-tag>
-                            <a-tag class="page-tag" style="width: 90px" color="blue">
+                            <a-tag class="page-tag pack-tag" color="blue">
                               数据包：{{ value.datapack_version }}
                             </a-tag>
                           </a-option>
@@ -309,16 +313,16 @@ function fileSelectorCancel() {
                       </a-select>
                     </a-form-item>
                   </a-col>
-                  <a-col :span="6">
-                    <a-form-item style="margin-left: 20px" label="显示快照">
+                  <a-col :xs="24" :sm="6">
+                    <a-form-item class="right-option" label="显示快照">
                       <a-checkbox v-model="status.showSnapshot" :disabled="status.building || !status.loaded"/>
                     </a-form-item>
                   </a-col>
                 </a-row>
               </div>
               <div>
-                <a-row>
-                  <a-col :span="18">
+                <a-row :gutter="12">
+                  <a-col :xs="24" :sm="18">
                     <a-form-item label="选择类型">
                       <a-select v-model="status.type" :disabled="status.building || !status.loaded">
                         <a-option value="all">全部</a-option>
@@ -327,8 +331,8 @@ function fileSelectorCancel() {
                       </a-select>
                     </a-form-item>
                   </a-col>
-                  <a-col :span="6">
-                    <a-form-item style="margin-left: 20px">
+                  <a-col :xs="24" :sm="6">
+                    <a-form-item class="right-option">
                       <template #label>
                         <a-tooltip>
                           <template #content>
@@ -360,6 +364,15 @@ function fileSelectorCancel() {
 </template>
 
 <style scoped>
+root {
+  min-width: 432px;
+}
+
+.page-scroll {
+  height: calc(100dvh - 80px);
+  overflow: auto;
+}
+
 .page-footer {
   display: flex;
   justify-content: center;
@@ -368,20 +381,63 @@ function fileSelectorCancel() {
 }
 
 .repo-input {
-  display: block;
-  padding-right: 200px;
-  padding-left: 200px;
-  min-width: 445px;
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.repo-form-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.repo-url-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.proxy-label {
+  white-space: nowrap;
+  margin-left: 8px;
 }
 
 .container {
   display: flex;
+  width: min(1900px, 100%);
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .page-content {
-  width: 1800px;
+  flex: 1;
+  min-width: 0;
   margin: 20px;
   display: inline-block;
+}
+
+.progress-wrap {
+  padding: 15px;
+  height: 10px;
+}
+
+.project-config {
+  display: flex;
+  gap: 12px;
+}
+
+.project-icon {
+  margin: 10px;
+  image-rendering: crisp-edges;
+  width: 200px;
+  height: 200px;
+  flex-shrink: 0;
+}
+
+.config-form {
+  flex: 1;
+  min-width: 0;
 }
 
 .btn {
@@ -390,7 +446,90 @@ function fileSelectorCancel() {
 }
 
 .page-tag {
-  margin-right: 10px;
-  margin-left: 10px;
+  margin-right: 6px;
+  margin-left: 0;
+}
+
+.version-tag {
+  min-width: 140px;
+}
+
+.pack-tag {
+  min-width: 98px;
+}
+
+.right-option {
+  margin-left: 20px;
+}
+
+@media (max-width: 1200px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page-content {
+    order: 1;
+    margin-top: 0;
+  }
+
+  .notice-area {
+    order: 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .repo-input {
+    padding: 0 12px;
+  }
+
+  .repo-form-row {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+
+  .btn {
+    margin-left: 0;
+    margin-right: 8px;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .page-content {
+    order: 1;
+    margin: 12px;
+  }
+
+  .notice-area {
+    order: 2;
+  }
+
+  .project-config {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .project-icon {
+    width: 140px;
+    height: 140px;
+    margin: 0;
+  }
+
+  .config-form {
+    width: 100%;
+  }
+
+  .version-tag,
+  .pack-tag {
+    min-width: 0;
+  }
+
+  .right-option {
+    margin-left: 0;
+  }
 }
 </style>
