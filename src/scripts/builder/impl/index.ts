@@ -315,7 +315,7 @@ authors = "${this.config.author}"
                         const originalMetaJson = JSON.parse(b64tou(mcmetaFile[0].content!!))
                         if (
                             (this.type === "data" && packFormat >= 82)
-                            || (packFormat >= 65)
+                            || (this.type !== "data" && packFormat >= 65)
                         ) {
                             let major = Math.floor(packFormat);
                             let minor = parseInt(packFormat.toString().split(".")[1]) || 0;
