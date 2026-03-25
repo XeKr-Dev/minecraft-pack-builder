@@ -478,7 +478,7 @@ root {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 816px) {
   .repo-input {
     padding: 0 12px;
   }
@@ -501,7 +501,7 @@ root {
 
   .page-content {
     order: 1;
-    margin: 12px;
+    margin: 20px 0;
   }
 
   .notice-area {

@@ -65,7 +65,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 816px) {
   .notice-content {
     margin: 0;
     max-width: none;
