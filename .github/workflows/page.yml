@@ -6,6 +6,7 @@ on:
     branches:
       - main
     paths:
+      - .github/workflows/page.yml
       - src/**
       - public/**
       - .env.development
@@ -51,6 +52,14 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
+      - name: Update Pages
+        uses: Gu-ZT/1panel-actions@1.0.5
+        with:
+          url: ${{ secrets.ONEPANEL_URL }}
+          token: ${{ secrets.ONEPANEL_TOKEN }}
+          action: runScript
+          params: |
+            name=更新 build.ztxy666.cn
 
   deploy:
     environment:
