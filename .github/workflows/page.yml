@@ -13,6 +13,8 @@ on:
       - .env.production
       - index.html
       - package.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
       - tsconfig.app.json
       - tsconfig.json
       - tsconfig.node.json
