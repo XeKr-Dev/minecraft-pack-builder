@@ -57,7 +57,7 @@ jobs:
         with:
           path: ./dist
       - name: Update Pages
-        uses: Gu-ZT/1panel-actions@1.0.5
+        uses: Gu-ZT/1panel-actions@1.1.0
         with:
           url: ${{ secrets.ONEPANEL_URL }}
           token: ${{ secrets.ONEPANEL_TOKEN }}
