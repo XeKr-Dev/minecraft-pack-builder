@@ -61,9 +61,9 @@ jobs:
         with:
           url: ${{ secrets.ONEPANEL_URL }}
           token: ${{ secrets.ONEPANEL_TOKEN }}
-          action: runScript
+          action: runCronjob
           params: |
-            name=更新 build.ztxy666.cn
+            name=更新build.ztxy666.cn
 
   deploy:
     environment:
