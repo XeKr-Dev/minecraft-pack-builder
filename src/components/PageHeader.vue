@@ -6,7 +6,7 @@ import {useI18n} from "vue-i18n";
 
 const repo = defineModel()
 const dark = ref(false)
-const {t, locale} = useI18n()
+const {t} = useI18n()
 
 function click() {
   dark.value = !dark.value
