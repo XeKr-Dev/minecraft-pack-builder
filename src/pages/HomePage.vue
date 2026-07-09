@@ -10,6 +10,9 @@ import Notice from "@/components/Notice.vue";
 import PageHeader from "@/components/PageHeader.vue";
 import FileSelectorDialog from "@/components/FileSelectorDialog.vue";
 import {Project} from "@/scripts/project/project.ts";
+import {useI18n} from "vue-i18n";
+
+const {t} = useI18n()
 
 const minecraft_version: {
   [key: string]: {
@@ -112,7 +115,7 @@ function loadRepo() {
         || urlSplit[2] === undefined
         || urlSplit[2] === ""
     ) {
-      Message.error("仓库地址错误，请填写正确的 GitHub 仓库地址")
+      Message.error(t("message.invalidRepo"))
       return
     }
     status.repo = `${urlSplit[1]}/${urlSplit[2]}`
@@ -122,7 +125,7 @@ function loadRepo() {
     status.project.loadRepo().then(() => {
       status.loaded = true
       status.loading = false
-      Message.success("加载成功")
+      Message.success(t("message.loadSuccess"))
     }).catch(e => {
       console.error(e)
       resetStatus()
@@ -191,18 +194,18 @@ function selectWithBindings(key: string) {
 
 function build() {
   if (!status.loaded) {
-    Message.error("请先加载配置文件")
+    Message.error(t("message.loadConfigFirst"))
     return
   }
   if (!status.selectedMinecraft) {
-    Message.error("请选择 Minecraft 版本")
+    Message.error(t("message.selectMinecraftVersion"))
     return
   }
   status.building = true
   status.progress = true
   status.project?.build(status.type, status.selectedModules, status.selectedMinecraft, status.buildToMod).then(() => {
     status.building = false
-    Message.success("构建成功")
+    Message.success(t("message.buildSuccess"))
   }).catch(e => {
     if (e == "should-open-file-selector") {
       console.warn(e)
@@ -210,7 +213,7 @@ function build() {
       return
     }
     status.building = false
-    Message.error("构建失败")
+    Message.error(t("message.buildFailed"))
     console.error(e)
   })
 }
@@ -221,15 +224,15 @@ async function fileSelectorOK() {
   status.project?.loadZip(status.files[0]).then(() => {
     status.project?.zipHandler(status.type, status.selectedModules, status.selectedMinecraft, status.buildToMod).then(() => {
       status.building = false
-      Message.success("构建成功")
+      Message.success(t("message.buildSuccess"))
     }).catch(e => {
       status.building = false
-      Message.error("构建失败")
+      Message.error(t("message.buildFailed"))
       console.error(e)
     })
   }).catch(e => {
     status.building = false
-    Message.error("构建失败")
+    Message.error(t("message.buildFailed"))
     console.error(e)
   })
 }
@@ -253,14 +256,14 @@ function fileSelectorCancel() {
   <a-scrollbar class="page-scroll">
     <div class="repo-input">
       <a-form :model="{}">
-        <a-form-item class="repo-form-item" :label="isUltraNarrow ? undefined : '仓库地址'"
+        <a-form-item class="repo-form-item" :label="isUltraNarrow ? undefined : t('home.repoAddress')"
                      :hide-label="isUltraNarrow" label-col-flex="4.5em">
           <div class="repo-form-row">
-            <a-input v-model="repoUrl" class="repo-url-input" placeholder="仓库地址"/>
-            <a-button class="btn load-btn" @click="loadRepo" :loading="status.loading" :disabled="status.building">加载</a-button>
+            <a-input v-model="repoUrl" class="repo-url-input" :placeholder="t('home.repoAddress')"/>
+            <a-button class="btn load-btn" @click="loadRepo" :loading="status.loading" :disabled="status.building">{{ t("home.load") }}</a-button>
             <div class="proxy-option">
               <a-checkbox v-model="useProxy"/>
-              <div class="proxy-label">使用代理</div>
+              <div class="proxy-label">{{ t("home.useProxy") }}</div>
             </div>
           </div>
         </a-form-item>
@@ -281,7 +284,7 @@ function fileSelectorCancel() {
           <div class="project-config">
             <a-image :src="status.project?.icon" class="project-icon"/>
             <a-form :model="{}" :auto-label-width="true" class="config-form">
-              <a-form-item label="选择模块">
+              <a-form-item :label="t('home.selectModules')">
                 <a-select v-model="status.selectedModules" multiple @change="changeModules"
                           :disabled="status.building || !status.loaded">
                   <div v-for="key in status.project?.moduleKeys()" :key="key">
@@ -297,7 +300,7 @@ function fileSelectorCancel() {
                   </div>
                 </a-select>
               </a-form-item>
-              <a-form-item label="选择合集">
+              <a-form-item :label="t('home.selectSet')">
                 <a-select v-model="status.selectedSet" @change="changeSet"
                           :disabled="status.building || !status.loaded">
                   <div v-for="key in status.project?.sets.keys()" :key="key">
@@ -316,7 +319,7 @@ function fileSelectorCancel() {
               <div>
                 <a-row :gutter="12">
                   <a-col :xs="24" :sm="18">
-                    <a-form-item label="选择版本">
+                    <a-form-item :label="t('home.selectVersion')">
                       <a-select v-model="status.selectedMinecraft" :disabled="status.building || !status.loaded"
                                 allow-search>
                         <div v-for="(value,key) in minecraft_version" :key="key">
@@ -325,10 +328,10 @@ function fileSelectorCancel() {
                               {{ key }}
                             </a-tag>
                             <a-tag class="page-tag pack-tag" color="red">
-                              资源包：{{ value.resources_version }}
+                              {{ t("home.resourceVersion", {version: value.resources_version}) }}
                             </a-tag>
                             <a-tag class="page-tag pack-tag" color="blue">
-                              数据包：{{ value.datapack_version }}
+                              {{ t("home.dataVersion", {version: value.datapack_version}) }}
                             </a-tag>
                           </a-option>
                         </div>
@@ -336,7 +339,7 @@ function fileSelectorCancel() {
                     </a-form-item>
                   </a-col>
                   <a-col :xs="24" :sm="6">
-                    <a-form-item class="right-option" label="显示快照">
+                    <a-form-item class="right-option" :label="t('home.showSnapshot')">
                       <a-checkbox v-model="status.showSnapshot" :disabled="status.building || !status.loaded"/>
                     </a-form-item>
                   </a-col>
@@ -345,11 +348,11 @@ function fileSelectorCancel() {
               <div>
                 <a-row :gutter="12">
                   <a-col :xs="24" :sm="18">
-                    <a-form-item label="选择类型">
+                    <a-form-item :label="t('home.selectType')">
                       <a-select v-model="status.type" :disabled="status.building || !status.loaded">
-                        <a-option value="all">全部</a-option>
-                        <a-option value="resource">资源包</a-option>
-                        <a-option value="data">数据包</a-option>
+                        <a-option value="all">{{ t("common.all") }}</a-option>
+                        <a-option value="resource">{{ t("common.resourcePack") }}</a-option>
+                        <a-option value="data">{{ t("common.dataPack") }}</a-option>
                       </a-select>
                     </a-form-item>
                   </a-col>
@@ -358,18 +361,18 @@ function fileSelectorCancel() {
                       <template #label>
                         <a-tooltip>
                           <template #content>
-                            构建为模组，可在Fabric/Quilt/Forge/Neoforge中加载
+                            {{ t("home.buildModTooltip") }}
                           </template>
                           <icon-question-circle-fill/>
                         </a-tooltip>
-                        构建模组
+                        {{ t("home.buildMod") }}
                       </template>
                       <a-checkbox v-model="status.buildToMod" :disabled="status.building || !status.loaded"/>
                     </a-form-item>
                   </a-col>
                 </a-row>
               </div>
-              <a-button @click="build" :loading="status.building" :disabled="status.building || !status.loaded">构建
+              <a-button @click="build" :loading="status.building" :disabled="status.building || !status.loaded">{{ t("home.build") }}
               </a-button>
             </a-form>
           </div>

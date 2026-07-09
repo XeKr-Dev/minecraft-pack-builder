@@ -1,0 +1,78 @@
+{
+  "common": {
+    "confirm": "Confirm",
+    "all": "All",
+    "resourcePack": "Resource Pack",
+    "dataPack": "Data Pack",
+    "login": "Login",
+    "language": "Language",
+    "chinese": "Chinese",
+    "english": "English"
+  },
+  "header": {
+    "title": "Resource/Data Pack Builder",
+    "tokenSaved": "Token saved",
+    "copied": "Copied to clipboard",
+    "share": "Share page",
+    "feedback": "Send feedback",
+    "source": "Source repository"
+  },
+  "notice": {
+    "announcement": "Notice",
+    "staticPrefix": "This page is a",
+    "staticPage": "static page",
+    "staticSuffix": "deployed on",
+    "apiPrefix": "This app uses the",
+    "apiMiddle": ". Anonymous users can only send",
+    "apiRequests": "requests per hour. Create a",
+    "tokenTooltip": "Create a Personal Access Token",
+    "tokenCreatePrefix": "on",
+    "tokenCreateSuffix": "and log in from the top-right corner.",
+    "tokenScopesPrefix": "Required scopes:",
+    "noBackendPrefix": "This app has no backend. The",
+    "noBackendMiddle": "is stored locally. You can use",
+    "noBackendDevtools": "to inspect",
+    "network": "network traffic",
+    "noBackendSuffix": ". We will not send network requests except to the",
+    "noBackendEnd": ".",
+    "sharePrefix": "Use",
+    "shareSuffix": "to share a build page with repository info included.",
+    "thanks": "Special Thanks",
+    "sponsor": "Support us",
+    "empty": "Open slot..."
+  },
+  "home": {
+    "repoAddress": "Repository",
+    "load": "Load",
+    "useProxy": "Use proxy",
+    "selectModules": "Modules",
+    "selectSet": "Preset",
+    "selectVersion": "Minecraft version",
+    "resourceVersion": "Resource: {version}",
+    "dataVersion": "Data: {version}",
+    "showSnapshot": "Snapshots",
+    "selectType": "Build type",
+    "buildModTooltip": "Build as a mod that can be loaded by Fabric/Quilt/Forge/Neoforge",
+    "buildMod": "Build mod",
+    "build": "Build"
+  },
+  "fileSelector": {
+    "invalidZip": "Please select a ZIP file",
+    "title": "Downloading repository ZIP",
+    "tip": "Drag the downloaded repository ZIP here"
+  },
+  "message": {
+    "invalidRepo": "Invalid repository URL. Please enter a valid GitHub repository URL.",
+    "loadSuccess": "Loaded",
+    "loadConfigFirst": "Please load the config file first",
+    "selectMinecraftVersion": "Please select a Minecraft version",
+    "buildSuccess": "Build succeeded",
+    "buildFailed": "Build failed",
+    "loadConfigFailed": "Failed to load config file",
+    "loadReadmeFailed": "Failed to load README.md",
+    "selectBuildType": "Please select a build type",
+    "loadZipFailed": "Failed to load ZIP file",
+    "requestFailed": "Request failed. You may have exceeded the rate limit. Log in with a GitHub Access Token in the top-right corner.",
+    "repoRequestFailed": "Repository request failed. Check the repository URL. Only full GitHub repository links are supported."
+  }
+}

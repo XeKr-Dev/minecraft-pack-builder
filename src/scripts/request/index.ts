@@ -1,5 +1,6 @@
 import axios, {type ResponseType} from 'axios'
 import {Message} from '@/scripts/message'
+import {t} from '@/i18n'
 
 export class Request {
     public static readonly baseUrl = `${import.meta.env.VITE_BASE_URL}/api`
@@ -97,9 +98,9 @@ export class Request {
 
     private static async reject(response: any, silence: boolean = false) {
         if (response.status == 403) {
-            if (!silence) Message.error("请求失败，可能是请求超过速率限制，请在右上角登录填写你的 GitHub Access Token")
+            if (!silence) Message.error(t("message.requestFailed"))
         } else if (response.status == 404) {
-            if (!silence) Message.error("请求仓库失败，请检查仓库地址，目前仅支持填写完整 GitHub 仓库链接")
+            if (!silence) Message.error(t("message.repoRequestFailed"))
         } else {
             if (!silence) Message.error(response.data?.message || response.message)
         }

@@ -2,6 +2,7 @@
 import {type Ref, ref} from "vue";
 import {Message} from "@/scripts/message";
 import {Upload} from "@arco-design/web-vue";
+import {useI18n} from "vue-i18n";
 
 const visible = defineModel("visible", {
   type: Boolean,
@@ -15,6 +16,7 @@ const files = defineModel("files", {
 const emits = defineEmits(["ok", "cancel"])
 const uploadRef = ref<Upload>();
 const fileList: Ref<{ file: File }[]> = ref([]);
+const {t} = useI18n()
 
 function onChange(fileList: { file: File }[]) {
   console.log(fileList)
@@ -31,7 +33,7 @@ function ok() {
           && files.value[0].type !== "application/zip"
       )
   ) {
-    Message.error("请选择 ZIP 文件")
+    Message.error(t("fileSelector.invalidZip"))
     return
   }
   emits("ok", files.value[0])
@@ -41,7 +43,7 @@ function ok() {
 <template>
   <a-modal v-model:visible="visible" @ok="ok" @cancel="emits('cancel')">
     <template #title>
-      正在下载仓库 ZIP 包
+      {{ t("fileSelector.title") }}
     </template>
     <a-upload
         draggable
@@ -54,7 +56,7 @@ function ok() {
         ref="uploadRef"
         @change="onChange"
         :custom-request="()=>{}"
-        tip="请将下载到的仓库 ZIP 包拖拽到此处"
+        :tip="t('fileSelector.tip')"
     />
   </a-modal>
 </template>

@@ -1,43 +1,45 @@
 <script setup lang="ts">
+import {useI18n} from "vue-i18n";
 
+const {t} = useI18n()
 </script>
 
 <template>
   <div class="notice-content">
     <a-card>
       <template #title>
-        公告
+        {{ t("notice.announcement") }}
       </template>
-      本页面是一个 <code>纯静态页面</code> ，部署于 <code>GitHub Pages</code>
+      {{ t("notice.staticPrefix") }} <code>{{ t("notice.staticPage") }}</code> {{ t("notice.staticSuffix") }} <code>GitHub Pages</code>
       <a-divider/>
-      本系统基于 <code>GitHub API</code> 实现，由于未登录用户访问限制每小时仅能发起 <code>60</code> 个 请求，请先在
+      {{ t("notice.apiPrefix") }} <code>GitHub API</code> {{ t("notice.apiMiddle") }} <code>60</code> {{ t("notice.apiRequests") }}
       <a-tooltip>
         <template #content>
-          前往创建 Personal Access Token
+          {{ t("notice.tokenTooltip") }}
         </template>
         <a-link href="https://github.com/settings/tokens/new" target="_blank"><code>GitHub</code></a-link>
       </a-tooltip>
-      上创建一个 <code>Personal Access Token</code> ，并于右上角登录，
-      需勾选的权限为： <code>public_repo</code> 与 <code>read:project</code>
+      {{ t("notice.tokenCreatePrefix") }} <code>Personal Access Token</code> {{ t("notice.tokenCreateSuffix") }}
+      {{ t("notice.tokenScopesPrefix") }} <code>public_repo</code> / <code>read:project</code>
       <a-divider/>
-      本系统没有后端，<code>Personal Access Token</code> 在本地存储， 具体可通过 <code>Ctrl + Shift + I</code>
-      打开开发者工具查看 <code>网络通信</code> ，我方承诺不会发起除 <code>Github API</code> 之外的网络请求。
+      {{ t("notice.noBackendPrefix") }}<code>Personal Access Token</code> {{ t("notice.noBackendMiddle") }} <code>Ctrl + Shift + I</code>
+      {{ t("notice.noBackendDevtools") }} <code>{{ t("notice.network") }}</code>{{ t("notice.noBackendSuffix") }} <code>GitHub API</code> {{ t("notice.noBackendEnd") }}
       <a-divider/>
-      使用 <code>https://build.xekr.dev/#/USER/REPO</code> 分享构建页面，可以携带仓库信息，方便链接获得者快速构建
+      {{ t("notice.sharePrefix") }} <code>https://build.xekr.dev/#/USER/REPO</code> {{ t("notice.shareSuffix") }}
     </a-card>
     <a-card style="margin-top: 20px">
       <template #title>
-        特别鸣谢
+        {{ t("notice.thanks") }}
         <a-tooltip>
           <template #content>
-            赞助我们
+            {{ t("notice.sponsor") }}
           </template>
           <a-link href="https://www.anvilcraft.dev/posts/base-info/support_us.html" target="_blank">
             <icon-gift size="large"/>
           </a-link>
         </a-tooltip>
       </template>
-      虚位以待...
+      {{ t("notice.empty") }}
     </a-card>
   </div>
 </template>

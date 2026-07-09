@@ -1,0 +1,78 @@
+{
+  "common": {
+    "confirm": "确认",
+    "all": "全部",
+    "resourcePack": "资源包",
+    "dataPack": "数据包",
+    "login": "登录",
+    "language": "语言",
+    "chinese": "中文",
+    "english": "English"
+  },
+  "header": {
+    "title": "资源包/数据包构建",
+    "tokenSaved": "Token 设置成功",
+    "copied": "已复制到剪贴板",
+    "share": "分享页面",
+    "feedback": "反馈问题",
+    "source": "源码仓库"
+  },
+  "notice": {
+    "announcement": "公告",
+    "staticPrefix": "本页面是一个",
+    "staticPage": "纯静态页面",
+    "staticSuffix": "，部署于",
+    "apiPrefix": "本系统基于",
+    "apiMiddle": "实现，由于未登录用户访问限制每小时仅能发起",
+    "apiRequests": "个请求，请先在",
+    "tokenTooltip": "前往创建 Personal Access Token",
+    "tokenCreatePrefix": "上创建一个",
+    "tokenCreateSuffix": "，并于右上角登录，",
+    "tokenScopesPrefix": "需勾选的权限为：",
+    "noBackendPrefix": "本系统没有后端，",
+    "noBackendMiddle": "在本地存储，具体可通过",
+    "noBackendDevtools": "打开开发者工具查看",
+    "network": "网络通信",
+    "noBackendSuffix": "，我方承诺不会发起除",
+    "noBackendEnd": "之外的网络请求。",
+    "sharePrefix": "使用",
+    "shareSuffix": "分享构建页面，可以携带仓库信息，方便链接获得者快速构建",
+    "thanks": "特别鸣谢",
+    "sponsor": "赞助我们",
+    "empty": "虚位以待..."
+  },
+  "home": {
+    "repoAddress": "仓库地址",
+    "load": "加载",
+    "useProxy": "使用代理",
+    "selectModules": "选择模块",
+    "selectSet": "选择合集",
+    "selectVersion": "选择版本",
+    "resourceVersion": "资源包：{version}",
+    "dataVersion": "数据包：{version}",
+    "showSnapshot": "显示快照",
+    "selectType": "选择类型",
+    "buildModTooltip": "构建为模组，可在 Fabric/Quilt/Forge/Neoforge 中加载",
+    "buildMod": "构建模组",
+    "build": "构建"
+  },
+  "fileSelector": {
+    "invalidZip": "请选择 ZIP 文件",
+    "title": "正在下载仓库 ZIP 包",
+    "tip": "请将下载到的仓库 ZIP 包拖拽到此处"
+  },
+  "message": {
+    "invalidRepo": "仓库地址错误，请填写正确的 GitHub 仓库地址",
+    "loadSuccess": "加载成功",
+    "loadConfigFirst": "请先加载配置文件",
+    "selectMinecraftVersion": "请选择 Minecraft 版本",
+    "buildSuccess": "构建成功",
+    "buildFailed": "构建失败",
+    "loadConfigFailed": "无法加载配置文件",
+    "loadReadmeFailed": "无法加载 README.md",
+    "selectBuildType": "请选择构建类型",
+    "loadZipFailed": "无法加载 ZIP 文件",
+    "requestFailed": "请求失败，可能是请求超过速率限制，请在右上角登录填写你的 GitHub Access Token",
+    "repoRequestFailed": "请求仓库失败，请检查仓库地址，目前仅支持填写完整 GitHub 仓库链接"
+  }
+}

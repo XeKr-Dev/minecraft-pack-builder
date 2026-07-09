@@ -17,7 +17,8 @@
     "github-markdown-css": "^5.8.1",
     "jszip": "^3.10.1",
     "marked": "^16.0.0",
-    "vue": "^3.5.17"
+    "vue": "^3.5.17",
+    "vue-i18n": "^11.4.6"
   },
   "devDependencies": {
     "@arco-design/web-vue": "^2.57.0",

@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
 import {Message} from "@/scripts/message";
+import {setLocale, type Locale} from "@/i18n";
+import {useI18n} from "vue-i18n";
 
 const repo = defineModel()
 const dark = ref(false)
+const {t, locale} = useI18n()
 
 function click() {
   dark.value = !dark.value
@@ -34,7 +37,7 @@ const ghp = ref("")
 
 function login() {
   localStorage.setItem("ghp", ghp.value)
-  Message.success("Token 设置成功")
+  Message.success(t("header.tokenSaved"))
 }
 
 const copied = ref(false)
@@ -43,6 +46,12 @@ function copyLink() {
   copied.value = true
   navigator.clipboard.writeText(window.location.href)
 }
+
+function changeLocale(value: string | number | Record<string, any> | undefined) {
+  if (value === 'zh-CN' || value === 'en-US') {
+    setLocale(value as Locale)
+  }
+}
 </script>
 
 <template>
@@ -50,7 +59,7 @@ function copyLink() {
     <template #title>
       <div class="header-title">
         <img class="header-icon" src="/icon.svg" alt="icon"/>
-        <p class="header-text">资源包/数据包构建</p>
+        <p class="header-text">{{ t("header.title") }}</p>
       </div>
     </template>
     <template #subtitle>
@@ -60,7 +69,7 @@ function copyLink() {
       <div class="header-extra">
         <a-tooltip>
           <template #content>
-            {{ copied ? "已复制到剪贴板" : "分享页面" }}
+            {{ copied ? t("header.copied") : t("header.share") }}
           </template>
           <a-link>
             <icon-share-alt size="large" @click="copyLink" @mouseleave="copied=false"/>
@@ -68,7 +77,7 @@ function copyLink() {
         </a-tooltip>
         <a-tooltip>
           <template #content>
-            反馈问题
+            {{ t("header.feedback") }}
           </template>
           <a-link href="https://qm.qq.com/q/63zITa0qfS" target="_blank">
             <icon-at size="large"/>
@@ -76,7 +85,7 @@ function copyLink() {
         </a-tooltip>
         <a-tooltip>
           <template #content>
-            源码仓库
+            {{ t("header.source") }}
           </template>
           <a-link href="https://github.com/XeKr-Dev/minecraft-pack-builder" target="_blank">
             <icon-github size="large"/>
@@ -86,11 +95,18 @@ function copyLink() {
           <icon-moon-fill v-if="dark"/>
           <icon-sun-fill v-else/>
         </a-button>
+        <a-dropdown @select="changeLocale">
+          <a-button class="btn" shape="circle"><icon-language /></a-button>
+          <template #content>
+            <a-doption value="zh-CN">{{ t("common.chinese") }}</a-doption>
+            <a-doption value="en-US">{{ t("common.english") }}</a-doption>
+          </template>
+        </a-dropdown>
         <a-dropdown>
-          <a-button class="btn">登录</a-button>
+          <a-button class="btn">{{ t("common.login") }}</a-button>
           <template #content>
             <a-input placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" v-model="ghp"/>
-            <a-doption @click="login">确认</a-doption>
+            <a-doption @click="login">{{ t("common.confirm") }}</a-doption>
           </template>
         </a-dropdown>
       </div>
@@ -128,6 +144,11 @@ function copyLink() {
   margin-right: 10px;
 }
 
+.locale-select {
+  width: 92px;
+  margin-left: 10px;
+}
+
 .page-header {
   min-height: 48px;
 }
@@ -156,6 +177,10 @@ function copyLink() {
   .btn {
     margin-left: 6px;
     margin-right: 0;
+  }
+
+  .locale-select {
+    margin-left: 6px;
   }
 }
 

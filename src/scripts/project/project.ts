@@ -6,6 +6,7 @@ import {Message} from "@/scripts/message";
 import {Builder} from "@/scripts/builder";
 import {saveAs} from "file-saver";
 import {BASE_64_PNG_PREFIX} from "@/scripts/constants";
+import {t} from "@/i18n";
 
 export class Project {
     public readonly repo: string
@@ -57,7 +58,7 @@ export class Project {
                         resolve()
                     })
                 }).catch(e => {
-                    Message.error("无法加载配置文件")
+                    Message.error(t("message.loadConfigFailed"))
                     console.error(e)
                     self.resetStatus()
                     reject(e)
@@ -65,7 +66,7 @@ export class Project {
                 GithubAPI.getRepoReadme(self.repo, Proxy.useProxy.value).then(readmeData => {
                     self.readme = b64tou(readmeData.content)
                 }).catch(e => {
-                    Message.error("无法加载 README.md")
+                    Message.error(t("message.loadReadmeFailed"))
                     console.error(e)
                     self.resetStatus()
                     reject(e)
@@ -138,7 +139,7 @@ export class Project {
 
     public build(type: "all" | "resource" | "data", selectedModules: string[], selectedMinecraft: string, buildToMod: boolean): Promise<void> {
         if (!type) {
-            Message.error("请选择构建类型")
+            Message.error(t("message.selectBuildType"))
             return Promise.reject()
         }
         const self = this;
@@ -165,11 +166,11 @@ export class Project {
                     Proxy.useProxy.value
                 ).then((blob) => {
                     resolve()
-                    Message.success("构建成功")
+                    Message.success(t("message.buildSuccess"))
                     saveAs(blob, `${self.config!.pack_name}-${self.config!.version}-${self.type}-mc${selectedMinecraft}.${buildToMod ? "jar" : "zip"}`)
                 }).catch(e => {
                     reject(e)
-                    Message.error("构建失败")
+                    Message.error(t("message.buildFailed"))
                     console.error(e)
                 })
                 return;
@@ -198,7 +199,7 @@ export class Project {
                 self.cacheZip = zip
                 resolve()
             }).catch(e => {
-                Message.error("无法加载 ZIP 文件")
+                Message.error(t("message.loadZipFailed"))
                 reject(e)
             })
         })
@@ -244,11 +245,11 @@ export class Project {
                     Proxy.useProxy.value,
                     neoZip
                 ).then((blob) => {
-                    Message.success("构建成功")
+                    Message.success(t("message.buildSuccess"))
                     saveAs(blob, `${self.config!.pack_name}-${self.config!.version}-${type}-mc${selectedMinecraft}.${buildToMod ? "jar" : "zip"}`)
                     resolve()
                 }).catch(e => {
-                    Message.error("构建失败")
+                    Message.error(t("message.buildFailed"))
                     console.error(e)
                     reject(e)
                 })
