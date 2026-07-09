@@ -32,7 +32,7 @@
           <template #content>
             赞助我们
           </template>
-          <a-link href="https://www.anvilcraft.dev/#/support" target="_blank">
+          <a-link href="https://www.anvilcraft.dev/posts/base-info/support_us.html" target="_blank">
             <icon-gift size="large"/>
           </a-link>
         </a-tooltip>
