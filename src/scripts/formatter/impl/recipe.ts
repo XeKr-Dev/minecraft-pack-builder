@@ -1,20 +1,20 @@
 import {b64tou, utob64} from "@/scripts/util";
 
+type IngredientObject = {
+    item?: string,
+    tag?: string
+}
+
+type RecipeIngredient = string | IngredientObject | RecipeIngredient[]
+type ObjectIngredient = IngredientObject | ObjectIngredient[]
+type ModernIngredient = string | ModernIngredient[]
+
 interface RecipeLess24w10a {
     key?: {
-        [key: string]: {
-            item?: string,
-            tag?: string
-        } | string[]
+        [key: string]: RecipeIngredient
     }
-    ingredients?: {
-        item?: string,
-        tag?: string
-    }[]
-    ingredient?: {
-        item?: string,
-        tag?: string
-    }
+    ingredients?: RecipeIngredient[]
+    ingredient?: RecipeIngredient
     result: {
         item: string,
         count?: number
@@ -23,19 +23,10 @@ interface RecipeLess24w10a {
 
 interface RecipeBetween24w10aTo24w33a {
     key?: {
-        [key: string]: {
-            item?: string,
-            tag?: string
-        } | string[]
+        [key: string]: ObjectIngredient
     }
-    ingredients?: {
-        item?: string,
-        tag?: string
-    }[]
-    ingredient?: {
-        item?: string,
-        tag?: string
-    }
+    ingredients?: ObjectIngredient[]
+    ingredient?: ObjectIngredient
     result: {
         id: string,
         count: number
@@ -44,10 +35,10 @@ interface RecipeBetween24w10aTo24w33a {
 
 interface RecipeMore24w33a {
     key?: {
-        [key: string]: string | string[]
+        [key: string]: ModernIngredient
     }
-    ingredients?: string[]
-    ingredient?: string
+    ingredients?: ModernIngredient[]
+    ingredient?: ModernIngredient
     result: {
         id: string,
         count: number
@@ -57,6 +48,38 @@ interface RecipeMore24w33a {
 type Recipe = RecipeLess24w10a | RecipeBetween24w10aTo24w33a | RecipeMore24w33a;
 
 export class RecipeFormatter {
+    private static toModernIngredient(ingredient: RecipeIngredient): ModernIngredient | undefined {
+        if (typeof (ingredient) === "string") {
+            return ingredient
+        }
+        if (ingredient instanceof Array) {
+            return ingredient
+                .map(value => RecipeFormatter.toModernIngredient(value))
+                .filter((value): value is ModernIngredient => value !== undefined)
+        }
+        if (ingredient.item) {
+            return ingredient.item
+        }
+        if (ingredient.tag) {
+            return `#${ingredient.tag}`
+        }
+        return undefined
+    }
+
+    private static toObjectIngredient(ingredient: ModernIngredient): ObjectIngredient {
+        if (ingredient instanceof Array) {
+            return ingredient.map(value => RecipeFormatter.toObjectIngredient(value))
+        }
+        if (ingredient.startsWith("#")) {
+            return {
+                tag: ingredient.substring(1)
+            }
+        }
+        return {
+            item: ingredient
+        }
+    }
+
     private static preprocess(recipe: Recipe): { [key: string]: any } {
         const data: {
             key?: any
@@ -81,44 +104,25 @@ export class RecipeFormatter {
         if (recipe.key) {
             resultRecipe.key = {}
             for (const keyKey in recipe.key) {
-                const value = recipe.key[keyKey]
-                if (typeof (value) === "string" || value instanceof Array) {
+                const value = RecipeFormatter.toModernIngredient(recipe.key[keyKey])
+                if (value !== undefined) {
                     resultRecipe.key[keyKey] = value
-                    continue
-                }
-                if (value.item) {
-                    resultRecipe.key[keyKey] = value.item
-                }
-                if (value.tag) {
-                    resultRecipe.key[keyKey] = `#${value.tag}`
                 }
             }
         }
         if (recipe.ingredients) {
             resultRecipe.ingredients = []
             for (const ingredient of recipe.ingredients) {
-                if (typeof (ingredient) === "string") {
-                    resultRecipe.ingredients.push(ingredient)
-                    continue
-                }
-                if (ingredient.item) {
-                    resultRecipe.ingredients.push(ingredient.item)
-                }
-                if (ingredient.tag) {
-                    resultRecipe.ingredients.push(`#${ingredient.tag}`)
+                const value = RecipeFormatter.toModernIngredient(ingredient)
+                if (value !== undefined) {
+                    resultRecipe.ingredients.push(value)
                 }
             }
         }
         if (recipe.ingredient) {
-            if (typeof (recipe.ingredient) === "string") {
-                resultRecipe.ingredient = recipe.ingredient
-            } else {
-                if (recipe.ingredient.item) {
-                    resultRecipe.ingredient = recipe.ingredient.item
-                }
-                if (recipe.ingredient.tag) {
-                    resultRecipe.ingredient = `#${recipe.ingredient.tag}`
-                }
+            const value = RecipeFormatter.toModernIngredient(recipe.ingredient)
+            if (value !== undefined) {
+                resultRecipe.ingredient = value
             }
         }
         if (typeof (recipe.result) === "string") {
@@ -146,46 +150,17 @@ export class RecipeFormatter {
             resultRecipe.key = {}
             for (const convertRecipeKey in convertRecipe.key) {
                 const value = convertRecipe.key[convertRecipeKey]
-                if (value instanceof Array) {
-                    resultRecipe.key[convertRecipeKey] = value
-                    continue
-                }
-                if (typeof (value) !== "string") continue;
-                if (value.startsWith("#")) {
-                    resultRecipe.key[convertRecipeKey] = {
-                        tag: value.substring(1)
-                    }
-                } else {
-                    resultRecipe.key[convertRecipeKey] = {
-                        item: value
-                    }
-                }
+                resultRecipe.key[convertRecipeKey] = RecipeFormatter.toObjectIngredient(value)
             }
         }
         if (convertRecipe.ingredients) {
             resultRecipe.ingredients = []
             for (const ingredient of convertRecipe.ingredients) {
-                if (ingredient.startsWith("#")) {
-                    resultRecipe.ingredients.push({
-                        tag: ingredient.substring(1)
-                    })
-                } else {
-                    resultRecipe.ingredients.push({
-                        item: ingredient
-                    })
-                }
+                resultRecipe.ingredients.push(RecipeFormatter.toObjectIngredient(ingredient))
             }
         }
         if (convertRecipe.ingredient) {
-            if (convertRecipe.ingredient.startsWith("#")) {
-                resultRecipe.ingredient = {
-                    tag: convertRecipe.ingredient.substring(1)
-                }
-            } else {
-                resultRecipe.ingredient = {
-                    item: convertRecipe.ingredient
-                }
-            }
+            resultRecipe.ingredient = RecipeFormatter.toObjectIngredient(convertRecipe.ingredient)
         }
         resultRecipe.result = convertRecipe.result
         return resultRecipe;
