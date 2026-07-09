@@ -8,9 +8,9 @@ export class GithubAPI {
         return proxy ? GithubAPI.testProxyGet(url) : Request.get(url)
     }
 
-    public static async getRepoContents(repo: string, path: string = "", proxy: boolean = false) {
+    public static async getRepoContents(repo: string, path: string = "", proxy: boolean = false, silence: boolean = false) {
         const url = `${GITHUB_API_URL}/repos/${repo}/contents/${path}/`;
-        return proxy ? GithubAPI.testProxyGet(url) : Request.get(url)
+        return proxy ? GithubAPI.testProxyGet(url) : Request.get(url, {}, false, 'json', silence)
     }
 
     public static async getRepoReadme(repo: string, proxy: boolean = false) {

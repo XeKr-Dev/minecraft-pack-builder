@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onBeforeUnmount, onMounted, reactive, ref} from "vue";
+import {onBeforeUnmount, onMounted, reactive, ref, watch} from "vue";
 import {Message} from "@/scripts/message";
 import MarkdownView from "@/components/MarkdownView.vue";
 import {Proxy} from "@/scripts/util";
@@ -12,7 +12,7 @@ import FileSelectorDialog from "@/components/FileSelectorDialog.vue";
 import {Project} from "@/scripts/project/project.ts";
 import {useI18n} from "vue-i18n";
 
-const {t} = useI18n()
+const {t, locale} = useI18n()
 
 const minecraft_version: {
   [key: string]: {
@@ -86,6 +86,14 @@ const status: Status = reactive({
   progress: false,
   openFileSelector: false,
   files: []
+})
+
+watch(locale, () => {
+  if (!status.loaded || !status.project) return
+  status.project.loadReadme().catch(e => {
+    Message.error(t("message.loadReadmeFailed"))
+    console.error(e)
+  })
 })
 
 function resetStatus() {

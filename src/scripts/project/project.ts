@@ -6,7 +6,7 @@ import {Message} from "@/scripts/message";
 import {Builder} from "@/scripts/builder";
 import {saveAs} from "file-saver";
 import {BASE_64_PNG_PREFIX} from "@/scripts/constants";
-import {t} from "@/i18n";
+import {i18n, t} from "@/i18n";
 
 export class Project {
     public readonly repo: string
@@ -20,6 +20,31 @@ export class Project {
 
     public constructor(repo: string) {
         this.repo = repo;
+    }
+
+    private static readmeFallbackPaths() {
+        if (i18n.global.locale.value === "en-US") {
+            return [
+                "README_en_US.md",
+                "README_en.md",
+                "README_EN.md",
+                "README.en.md",
+                "README.EN.md",
+                "README-en.md",
+                "README-EN.md",
+                "README.md"
+            ]
+        }
+        return [
+            "README_zh_CN.md",
+            "README_zh.md",
+            "README_ZH.md",
+            "README.zh.md",
+            "README.ZH.md",
+            "README-zh.md",
+            "README-ZH.md",
+            "README.md"
+        ]
     }
 
     public moduleKeys() {
@@ -63,9 +88,7 @@ export class Project {
                     self.resetStatus()
                     reject(e)
                 })
-                GithubAPI.getRepoReadme(self.repo, Proxy.useProxy.value).then(readmeData => {
-                    self.readme = b64tou(readmeData.content)
-                }).catch(e => {
+                self.loadReadme().catch(e => {
                     Message.error(t("message.loadReadmeFailed"))
                     console.error(e)
                     self.resetStatus()
@@ -77,6 +100,23 @@ export class Project {
                 reject(e)
             }
         })
+    }
+
+    public loadReadme(): Promise<void> {
+        const paths = Project.readmeFallbackPaths()
+        const load = (index: number): Promise<void> => {
+            const path = paths[index]
+            if (!path) return Promise.reject(new Error("No README fallback matched"))
+            return GithubAPI.getRepoContents(this.repo, path, Proxy.useProxy.value, true).then(readmeData => {
+                this.readme = b64tou(readmeData.content)
+            }).catch(e => {
+                if (index < paths.length - 1) {
+                    return load(index + 1)
+                }
+                return Promise.reject(e)
+            })
+        }
+        return load(0)
     }
 
     public loadModules(): Promise<void> {
