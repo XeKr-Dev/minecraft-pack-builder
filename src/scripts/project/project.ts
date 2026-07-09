@@ -17,6 +17,8 @@ export class Project {
     public sets: Map<string, SetConfigJson> = new Map()
     public type: "all" | "resource" | "data" = "all"
     public cacheZip?: JSZip
+    public readmePaths?: Set<string>
+    public readmeContentCache: Map<string, string> = new Map()
 
     public constructor(repo: string) {
         this.repo = repo;
@@ -59,6 +61,8 @@ export class Project {
         this.type = "all"
         this.icon = ""
         this.cacheZip = undefined
+        this.readmePaths = undefined
+        this.readmeContentCache = new Map()
     }
 
     public loadRepo(): Promise<void> {
@@ -88,7 +92,7 @@ export class Project {
                     self.resetStatus()
                     reject(e)
                 })
-                self.loadReadme().catch(e => {
+                self.preloadReadmes().then(() => self.loadReadme()).catch(e => {
                     Message.error(t("message.loadReadmeFailed"))
                     console.error(e)
                     self.resetStatus()
@@ -103,20 +107,49 @@ export class Project {
     }
 
     public loadReadme(): Promise<void> {
-        const paths = Project.readmeFallbackPaths()
-        const load = (index: number): Promise<void> => {
-            const path = paths[index]
+        return this.loadRootReadmePaths().then(readmePaths => {
+            const path = Project.readmeFallbackPaths().find(path => readmePaths.has(path))
             if (!path) return Promise.reject(new Error("No README fallback matched"))
+            const cachedReadme = this.readmeContentCache.get(path)
+            if (cachedReadme !== undefined) {
+                this.readme = cachedReadme
+                return
+            }
             return GithubAPI.getRepoContents(this.repo, path, Proxy.useProxy.value, true).then(readmeData => {
-                this.readme = b64tou(readmeData.content)
-            }).catch(e => {
-                if (index < paths.length - 1) {
-                    return load(index + 1)
-                }
-                return Promise.reject(e)
+                const readme = b64tou(readmeData.content)
+                this.readmeContentCache.set(path, readme)
+                this.readme = readme
             })
-        }
-        return load(0)
+        })
+    }
+
+    public preloadReadmes(): Promise<void> {
+        return this.loadRootReadmePaths().then(readmePaths => {
+            const promises = Array.from(readmePaths)
+                .filter(path => !this.readmeContentCache.has(path))
+                .map(path => {
+                    return GithubAPI.getRepoContents(this.repo, path, Proxy.useProxy.value, true).then(readmeData => {
+                        this.readmeContentCache.set(path, b64tou(readmeData.content))
+                    })
+                })
+            return Promise.all(promises).then(() => undefined)
+        })
+    }
+
+    public loadRootReadmePaths(): Promise<Set<string>> {
+        if (this.readmePaths) return Promise.resolve(this.readmePaths)
+        return GithubAPI.getRepoContents(this.repo, "", Proxy.useProxy.value, true).then(rootContents => {
+            if (!Array.isArray(rootContents)) {
+                this.readmePaths = new Set()
+                return this.readmePaths
+            }
+            this.readmePaths = new Set(
+                rootContents
+                    .map(file => file.name)
+                    .filter(name => name.startsWith("README") && name.toLowerCase().endsWith(".md"))
+            )
+            return this.readmePaths
+        })
     }
 
     public loadModules(): Promise<void> {

@@ -9,7 +9,10 @@ export class GithubAPI {
     }
 
     public static async getRepoContents(repo: string, path: string = "", proxy: boolean = false, silence: boolean = false) {
-        const url = `${GITHUB_API_URL}/repos/${repo}/contents/${path}/`;
+        const cleanPath = path.replace(/^\/+|\/+$/g, '')
+        const url = cleanPath
+            ? `${GITHUB_API_URL}/repos/${repo}/contents/${cleanPath}`
+            : `${GITHUB_API_URL}/repos/${repo}/contents`;
         return proxy ? GithubAPI.testProxyGet(url) : Request.get(url, {}, false, 'json', silence)
     }
 
