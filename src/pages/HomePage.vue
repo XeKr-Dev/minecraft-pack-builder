@@ -461,6 +461,14 @@ root {
   width: 200px;
   height: 200px;
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+.project-icon :deep(.arco-image-img) {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: crisp-edges;
 }
 
 .config-form {
